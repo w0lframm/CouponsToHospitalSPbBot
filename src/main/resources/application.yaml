@@ -1,0 +1,4 @@
+# need to register bot with BotFather
+bot:
+  name: SomeName
+  token: Sometoken
