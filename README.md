@@ -12,9 +12,9 @@ ____
 
 ##Авторы
 группа 3530904/00104 СПбПУ:
-* Борисова Екатерина @KateBor
-* Дюрдева Дарья @DariaDiurdeva
-* Иванова Мария @maryshekk
-* Лебедева Екатерина @w0lframm
-* Эзериня Марта @Martulik
+* [Борисова Екатерина](https://github.com/KateBor)
+* [Дюрдева Дарья](https://github.com/DariaDiurdeva)
+* [Иванова Мария](https://github.com/maryshekk)
+* [Лебедева Екатерина](https://github.com/w0lframm)
+* [Эзериня Марта](https://github.com/Martulik)
 
