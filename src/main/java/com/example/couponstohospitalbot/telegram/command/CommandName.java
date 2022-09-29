@@ -1,11 +1,10 @@
 package com.example.couponstohospitalbot.telegram.command;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public enum CommandName {
 
     START("/start"),

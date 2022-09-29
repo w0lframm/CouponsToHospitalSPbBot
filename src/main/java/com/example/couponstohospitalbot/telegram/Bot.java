@@ -1,7 +1,7 @@
 package com.example.couponstohospitalbot.telegram;
 
 import com.example.couponstohospitalbot.telegram.command.CommandContainer;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.couponstohospitalbot.telegram.service.SendBotMessageServiceImpl;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -14,10 +14,13 @@ import static com.example.couponstohospitalbot.telegram.command.CommandName.NO;
 public class Bot extends TelegramLongPollingBot {
     public static String COMMAND_PREFIX = "/";
     private static final Logger log = Logger.getLogger(Bot.class.getName());
-    @Autowired
-    CommandContainer commandContainer;
-    @Autowired
-    BotProperties botProperties;
+    private final CommandContainer commandContainer;
+    private final BotProperties botProperties;
+
+    public Bot(BotProperties botProperties) {
+        this.botProperties = botProperties;
+        this.commandContainer = new CommandContainer(new SendBotMessageServiceImpl(this));
+    }
 
     @Override
     public String getBotUsername() {

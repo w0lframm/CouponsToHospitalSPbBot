@@ -4,6 +4,7 @@ import com.example.couponstohospitalbot.telegram.service.SendBotMessageService;
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+@RequiredArgsConstructor
 public class StartCommand implements Command {
     private final SendBotMessageService sendBotMessageService;
 
@@ -13,9 +14,6 @@ public class StartCommand implements Command {
     // Здесь не добавляем сервис через получение из Application Context.
     // Потому что если это сделать так, то будет циклическая зависимость, которая
     // ломает работу приложения.
-    public StartCommand(SendBotMessageService sendBotMessageService) {
-        this.sendBotMessageService = sendBotMessageService;
-    }
 
     @Override
     public void execute(Update update) {
