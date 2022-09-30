@@ -1,6 +1,7 @@
 package com.example.couponstohospitalbot.telegram.command;
 
 import com.example.couponstohospitalbot.telegram.Command;
+import com.example.couponstohospitalbot.telegram.hospitalCommand.ChooseCommand;
 import com.example.couponstohospitalbot.telegram.service.SendBotMessageService;
 import com.google.common.collect.ImmutableMap;
 
@@ -18,6 +19,7 @@ public class CommandContainer {
                 .put(STOP.getCommandName(), new StopCommand(sendBotMessageService))
                 .put(HELP.getCommandName(), new HelpCommand(sendBotMessageService))
                 .put(NO.getCommandName(), new NoCommand(sendBotMessageService))
+                .put(CHOOSE.getCommandName(), new ChooseCommand(sendBotMessageService))
                 .build();
 
         unknownCommand = new UnknownCommand(sendBotMessageService);

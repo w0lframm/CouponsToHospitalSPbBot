@@ -17,11 +17,12 @@ public class HelpCommand implements Command {
                     + "<b>Начать\\закончить работу с ботом</b>\n"
                     + "%s - начать работу со мной\n"
                     + "%s - приостановить работу со мной\n\n"
+                    + "%s - начать выбор для отслеживания\n\n"
                     + "%s - получить помощь в работе со мной\n",
+
 // todo: добавить комманды
 
-//                    + "%s - начать \n",
-            START.getCommandName(), STOP.getCommandName(), HELP.getCommandName());
+            START.getCommandName(), STOP.getCommandName(), CHOOSE.getCommandName(), HELP.getCommandName());
 
     @Override
     public void execute(Update update) {
