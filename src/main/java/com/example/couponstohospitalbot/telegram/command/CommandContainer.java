@@ -1,5 +1,6 @@
 package com.example.couponstohospitalbot.telegram.command;
 
+import com.example.couponstohospitalbot.telegram.Command;
 import com.example.couponstohospitalbot.telegram.service.SendBotMessageService;
 import com.google.common.collect.ImmutableMap;
 

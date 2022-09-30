@@ -1,4 +1,4 @@
-package com.example.couponstohospitalbot.telegram.command;
+package com.example.couponstohospitalbot.telegram;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 

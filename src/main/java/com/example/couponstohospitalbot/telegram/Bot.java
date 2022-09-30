@@ -5,7 +5,7 @@ import com.example.couponstohospitalbot.telegram.service.SendBotMessageServiceIm
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import java.util.logging.Logger;
 
 import static com.example.couponstohospitalbot.telegram.command.CommandName.NO;
@@ -16,6 +16,8 @@ public class Bot extends TelegramLongPollingBot {
     private static final Logger log = Logger.getLogger(Bot.class.getName());
     private final CommandContainer commandContainer;
     private final BotProperties botProperties;
+
+    private ReplyKeyboardMarkup replyKeyboardMarkup;
 
     public Bot(BotProperties botProperties) {
         this.botProperties = botProperties;
@@ -45,4 +47,5 @@ public class Bot extends TelegramLongPollingBot {
             }
         }
     }
+
 }

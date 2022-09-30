@@ -1,5 +1,6 @@
 package com.example.couponstohospitalbot.telegram.command;
 
+import com.example.couponstohospitalbot.telegram.Command;
 import com.example.couponstohospitalbot.telegram.service.SendBotMessageService;
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,6 +18,9 @@ public class HelpCommand implements Command {
                     + "%s - начать работу со мной\n"
                     + "%s - приостановить работу со мной\n\n"
                     + "%s - получить помощь в работе со мной\n",
+// todo: добавить комманды
+
+//                    + "%s - начать \n",
             START.getCommandName(), STOP.getCommandName(), HELP.getCommandName());
 
     @Override
