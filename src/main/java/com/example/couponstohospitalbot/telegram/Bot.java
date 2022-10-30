@@ -1,6 +1,7 @@
 package com.example.couponstohospitalbot.telegram;
 
 import com.example.couponstohospitalbot.telegram.command.CommandContainer;
+import com.example.couponstohospitalbot.telegram.keyboards.Buttons;
 import com.example.couponstohospitalbot.telegram.service.SendBotMessageServiceImpl;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -9,10 +10,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -53,8 +54,6 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        setButtons(update.getMessage().getChatId());
-
         if (update.hasMessage() && update.getMessage().hasText()) {
             String message = update.getMessage().getText().trim();
             if (message.startsWith(COMMAND_PREFIX)) {
@@ -66,24 +65,46 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public void setButtons(Long chatId) {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText("*обработка нажатия кнопки*");
-
-        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup(); // кнопки вместо клавы
-        List<KeyboardRow> keyboardRows = new ArrayList<>();             // лист рядов кнопок
-        KeyboardRow row = new KeyboardRow();                            // один ряд кнопок
-
-        row.add("button 1");                                            // добавляем кнопки в ряд
-        row.add("button 2");
-        keyboardRows.add(row);                                          // добавляем ряд в лист
-
-        keyboardMarkup.setKeyboard(keyboardRows);                       // устанавливаем кнопки вместо клавы
-
-        message.setReplyMarkup(keyboardMarkup);                         // к исходящему от нас сообщению добавляем клаву
+    public void setButtonsDist(Long chatId) throws URISyntaxException, IOException {
+        SendMessage sendMessage = Buttons.setButtonsDistrict(chatId);
         try {
-            execute(message);
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setButtonsHospital(Long chatId, String message) throws URISyntaxException, IOException {
+        SendMessage sendMessage = Buttons.setButtonsHospital(chatId, message);
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setButtonsDirection(Long chatId, String message) throws URISyntaxException, IOException {
+        SendMessage sendMessage = Buttons.setButtonsDirection(chatId, message);
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setButtonsDoctors(Long chatId, String message) throws URISyntaxException, IOException {
+        SendMessage sendMessage = Buttons.setButtonDoctors(chatId, message);
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setButtonsTime(Long chatId, String message) throws URISyntaxException, IOException {
+        SendMessage sendMessage = Buttons.setButtonDateAndTime(chatId, message);
+        try {
+            execute(sendMessage);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
