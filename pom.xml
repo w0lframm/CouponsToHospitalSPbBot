@@ -30,12 +30,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>2.7.4</version>
         </dependency>
-
-        <!--        <dependency>-->
-<!--            <groupId>com.github.xabgesagtx</groupId>-->
-<!--            <artifactId>telegram-spring-boot-starter</artifactId>-->
-<!--            <version>0.26</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots-spring-boot-starter</artifactId>
@@ -93,6 +87,31 @@
             <artifactId>corn-converter</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.telegram/telegrambots-abilities -->
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots-abilities</artifactId>
+            <version>6.1.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>2.7.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.25</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.1.5.Final</version>
+        </dependency>
+
     </dependencies>
 
     <build>

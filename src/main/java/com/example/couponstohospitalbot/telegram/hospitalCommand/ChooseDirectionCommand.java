@@ -12,24 +12,22 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static com.example.couponstohospitalbot.telegram.keyboards.Constants.CHOOSE_HOSPITAL;
+import static com.example.couponstohospitalbot.telegram.keyboards.Constants.CHOOSE_DIRECTION;
 
 @RequiredArgsConstructor
-public class ChooseHospitalCommand implements Command {
+public class ChooseDirectionCommand implements Command {
     private final MessageSender sender;
     SendMessage message;
+
 
     @Override
     public void execute(Update update) {
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
-        System.out.println(chatId.toString());
-        message = new SendMessage(chatId.toString(), CHOOSE_HOSPITAL);
+        message = new SendMessage(chatId.toString(), CHOOSE_DIRECTION);
         try {
-            String value = update.getCallbackQuery().getData();
-            System.out.println(value);
-            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).hospitalButtons(chatId, value));
+            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).departmentButtons(chatId, update.getCallbackQuery().getData()));
             sender.execute(message);
-        } catch (TelegramApiException | URISyntaxException | IOException e) {
+        } catch (TelegramApiException | IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }

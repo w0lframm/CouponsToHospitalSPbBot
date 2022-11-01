@@ -1,17 +1,18 @@
 package com.example.couponstohospitalbot.telegram.command;
 
 import com.example.couponstohospitalbot.telegram.Command;
-import com.example.couponstohospitalbot.telegram.service.SendBotMessageService;
 import lombok.RequiredArgsConstructor;
+import org.telegram.abilitybots.api.sender.MessageSender;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import static com.example.couponstohospitalbot.telegram.keyboards.Constants.START_MESSAGE;
 
 @RequiredArgsConstructor
 public class StartCommand implements Command {
-    private final SendBotMessageService sendBotMessageService;
-
-    public final static String START_MESSAGE = "Привет. Я помогу тебе узнать о новых талончиках в твою поликлинничечку. " +
-            "Но я еще маленький и только учусь.\n"+
-            "Если хочешь выбрать новую поликлинику нажми";
+    private final MessageSender sender;
+    SendMessage message;
 
     // Здесь не добавляем сервис через получение из Application Context.
     // Потому что если это сделать так, то будет циклическая зависимость, которая
@@ -19,6 +20,13 @@ public class StartCommand implements Command {
 
     @Override
     public void execute(Update update) {
-        sendBotMessageService.sendMessage(update.getMessage().getChatId().toString(), START_MESSAGE);
+        System.out.println(update.getMessage().getChatId().toString());
+
+        message = new SendMessage(update.getMessage().getChatId().toString(), START_MESSAGE);
+        try {
+            sender.execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 }
