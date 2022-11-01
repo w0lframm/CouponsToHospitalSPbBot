@@ -20,8 +20,6 @@ public class StartCommand implements Command {
 
     @Override
     public void execute(Update update) {
-        System.out.println(update.getMessage().getChatId().toString());
-
         message = new SendMessage(update.getMessage().getChatId().toString(), START_MESSAGE);
         try {
             sender.execute(message);

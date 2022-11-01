@@ -67,7 +67,6 @@ public class Bot extends TelegramLongPollingBot {
         } else if (update.hasCallbackQuery()) {
             String buttonValue = update.getCallbackQuery().getData();
             Long chatId = update.getCallbackQuery().getMessage().getChatId();
-            logger.info(buttonValue);
             HospitalCommandName name = ApplicationContextHolder.getContext().getBean(StateService.class).getCurrentState(chatId);
             hospitalCommandContainer.retrieveCommand(name.getHospitalCommandName()).execute(update);
         }

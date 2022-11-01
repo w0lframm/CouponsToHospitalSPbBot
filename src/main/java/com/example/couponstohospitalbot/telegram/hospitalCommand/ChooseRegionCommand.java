@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.logging.Logger;
 
 import static com.example.couponstohospitalbot.telegram.keyboards.Constants.CHOOSE_MESSAGE;
 
@@ -19,10 +20,12 @@ public class ChooseRegionCommand implements Command {
 
     private final MessageSender sender;
     SendMessage message;
+    private static final Logger logger = Logger.getLogger(ChooseRegionCommand.class.getName());
 
     @Override
     public void execute(Update update) {
         Long chatId = update.getMessage().getChatId();
+        logger.info("ChatId = " + chatId);
         message = new SendMessage(chatId.toString(), CHOOSE_MESSAGE);
         try {
             message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).regionButtons(chatId));

@@ -11,23 +11,25 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.logging.Logger;
 
 import static com.example.couponstohospitalbot.telegram.keyboards.Constants.CHOOSE_HOSPITAL;
+import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.findRegionNameById;
 
 @RequiredArgsConstructor
 public class ChooseHospitalCommand implements Command {
     private final MessageSender sender;
     SendMessage message;
+    private static final Logger logger = Logger.getLogger(ChooseHospitalCommand.class.getName());
 
     @Override
     public void execute(Update update) {
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
-        System.out.println(chatId.toString());
-        message = new SendMessage(chatId.toString(), CHOOSE_HOSPITAL);
+        String regionId = update.getCallbackQuery().getData();
+        logger.info("ChatId = " + chatId + "; RegionId = " + regionId);
         try {
-            String value = update.getCallbackQuery().getData();
-            System.out.println(value);
-            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).hospitalButtons(chatId, value));
+            message = new SendMessage(chatId.toString(), "Район: " + findRegionNameById(regionId) + CHOOSE_HOSPITAL);
+            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).hospitalButtons(chatId, regionId));
             sender.execute(message);
         } catch (TelegramApiException | URISyntaxException | IOException e) {
             e.printStackTrace();

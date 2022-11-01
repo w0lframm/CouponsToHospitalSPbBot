@@ -17,7 +17,6 @@ public class StopCommand implements Command {
 
     @Override
     public void execute(Update update) {
-        System.out.println(update.getMessage().getChatId().toString());
         message = new SendMessage(update.getMessage().getChatId().toString(), STOP_MESSAGE);
         try {
             sender.execute(message); //здесь надо как то сбросить текущее состояние выбора

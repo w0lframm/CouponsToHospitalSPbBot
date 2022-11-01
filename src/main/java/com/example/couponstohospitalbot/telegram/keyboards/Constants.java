@@ -5,10 +5,10 @@ import static com.example.couponstohospitalbot.telegram.command.CommandName.HELP
 
 public class Constants {
 
-    public static final String CHOOSE_HOSPITAL = "Выберите больницу:";
-    public static final String CHOOSE_MESSAGE = "Выберите район:";
-    public static final String CHOOSE_DIRECTION = "Выберите направление:";
-    public static final String CHOOSE_DOCTOR = "Выберите доктора:";
+    public static final String CHOOSE_HOSPITAL = ". Выберите больницу:";
+    public static final String CHOOSE_MESSAGE = ". Выберите район:";
+    public static final String CHOOSE_DIRECTION = ". Выберите направление:";
+    public static final String CHOOSE_DOCTOR = ". Выберите доктора:";
 
 
     public static final String UNKNOWN_MESSAGE = "Не понимаю вас \uD83D\uDE1F, напишите /help чтобы узнать что я понимаю.";

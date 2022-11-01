@@ -60,7 +60,7 @@ public class KeyBoardFactory {
         for (int i = 0; i < array.length(); i++) {
             JSONObject jsObj = array.getJSONObject(i);
             String hospName = jsObj.get("lpuFullName").toString();
-            System.out.println(hospName);
+            logger.info(hospName);
             if (hospName.getBytes().length > 64) {
                 hospName = shortHospName(hospName); // если больше 64 байт
                 if (hospName.getBytes().length > 64) {
@@ -69,8 +69,7 @@ public class KeyBoardFactory {
                         hospName = shortHospName(hospName);
                     }
                 }
-                System.out.println("LONGER THAN 64 BYTES -> " + hospName);
-                //continue;
+                logger.warning("LONGER THAN 64 BYTES -> " + hospName);
             }
             List<InlineKeyboardButton> rowInline = new ArrayList<>();
             InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton(hospName); //отправляем сокращенное
@@ -104,11 +103,10 @@ public class KeyBoardFactory {
         for (int i = 0; i < array.length(); i++) {
             JSONObject jsObj = array.getJSONObject(i);
             String directionName = jsObj.get("name").toString();
-            System.out.println(directionName);
+            logger.info("DirectionName: " + directionName);
             if (directionName.getBytes().length > 64) {
                 directionName = shortDirectionName(directionName);
                 logger.warning("LONGER THAN 64 BYTES -> " + directionName);
-                //continue;
             }
             List<InlineKeyboardButton> rowInline = new ArrayList<>();
             InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton(directionName);  //(если надо то доделать сокращение)?
@@ -155,7 +153,6 @@ public class KeyBoardFactory {
             if ((doctorName).getBytes().length > 64 - tickets.getBytes().length) {
                 doctorName = shortDoctorName(doctorName, 64 - tickets.getBytes().length);
                 logger.warning("LONGER THAN 64 BYTES -> " + doctorName);
-                continue;
             }
             List<InlineKeyboardButton> rowInline = new ArrayList<>();
             InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton(doctorName + tickets);  //отправляем сокращенное имя и колво талонов

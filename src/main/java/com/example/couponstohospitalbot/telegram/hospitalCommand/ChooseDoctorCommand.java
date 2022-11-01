@@ -10,24 +10,29 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.logging.Logger;
+
 import static com.example.couponstohospitalbot.telegram.keyboards.Constants.CHOOSE_DOCTOR;
+import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.findDirectionNameById;
 
 @RequiredArgsConstructor
 public class ChooseDoctorCommand implements Command {
     private final MessageSender sender;
     SendMessage message;
+    private static final Logger logger = Logger.getLogger(ChooseDoctorCommand.class.getName());
 
     @Override
     public void execute(Update update) {
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
-        message = new SendMessage(chatId.toString(), CHOOSE_DOCTOR);
-        //переделать
+        String directionId = update.getCallbackQuery().getData();
+        logger.info("ChatId = " + chatId + "; DirectionId = " + directionId);
         try {
-
-            //System.out.println(update.getCallbackQuery().getData());
-            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).doctorButtons(chatId, update.getCallbackQuery().getData())); // надо бы выводить еще количество талонов, если они есть
+            message = new SendMessage(chatId.toString(), "Направление: " + findDirectionNameById(chatId, directionId) + CHOOSE_DOCTOR);
+            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).doctorButtons(chatId, directionId));
             sender.execute(message);
-        } catch (TelegramApiException e) {
+        } catch (TelegramApiException | URISyntaxException | IOException e) {
             e.printStackTrace();
         }
     }

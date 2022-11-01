@@ -11,21 +11,25 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.logging.Logger;
 
 import static com.example.couponstohospitalbot.telegram.keyboards.Constants.CHOOSE_DIRECTION;
+import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.findHospitalNameById;
 
 @RequiredArgsConstructor
 public class ChooseDirectionCommand implements Command {
     private final MessageSender sender;
     SendMessage message;
-
+    private static final Logger logger = Logger.getLogger(ChooseDirectionCommand.class.getName());
 
     @Override
     public void execute(Update update) {
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
-        message = new SendMessage(chatId.toString(), CHOOSE_DIRECTION);
+        String hospitalId = update.getCallbackQuery().getData();
+        logger.info("ChatId = " + chatId + "; HospitalId = " + hospitalId);
         try {
-            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).departmentButtons(chatId, update.getCallbackQuery().getData()));
+            message = new SendMessage(chatId.toString(), "Больница: " + findHospitalNameById(chatId, hospitalId) + CHOOSE_DIRECTION);
+            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).departmentButtons(chatId, hospitalId));
             sender.execute(message);
         } catch (TelegramApiException | IOException | URISyntaxException e) {
             e.printStackTrace();
