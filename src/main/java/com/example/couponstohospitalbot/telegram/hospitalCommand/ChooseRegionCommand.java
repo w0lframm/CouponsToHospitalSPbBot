@@ -13,25 +13,24 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
-import static com.example.couponstohospitalbot.telegram.keyboards.Constants.CHOOSE_HOSPITAL;
-import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.findRegionNameById;
+import static com.example.couponstohospitalbot.telegram.keyboards.Constants.CHOOSE_MESSAGE;
 
 @RequiredArgsConstructor
-public class ChooseHospitalCommand implements Command {
+public class ChooseRegionCommand implements Command {
+
     private final MessageSender sender;
     SendMessage message;
-    private static final Logger logger = Logger.getLogger(ChooseHospitalCommand.class.getName());
+    private static final Logger logger = Logger.getLogger(ChooseRegionCommand.class.getName());
 
     @Override
     public void execute(Update update) {
-        Long chatId = update.getCallbackQuery().getMessage().getChatId();
-        String regionId = update.getCallbackQuery().getData();
-        logger.info("ChatId = " + chatId + "; RegionId = " + regionId);
+        Long chatId = update.getMessage().getChatId();
+        logger.info("ChatId = " + chatId);
+        message = new SendMessage(chatId.toString(), CHOOSE_MESSAGE);
         try {
-            message = new SendMessage(chatId.toString(), "Район: " + findRegionNameById(regionId) + CHOOSE_HOSPITAL);
-            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).hospitalButtons(chatId, regionId));
+            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).regionButtons(chatId));
             sender.execute(message);
-        } catch (TelegramApiException | URISyntaxException | IOException e) {
+        } catch (IOException | URISyntaxException | TelegramApiException e) {
             e.printStackTrace();
         }
     }

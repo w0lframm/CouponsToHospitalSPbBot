@@ -11,9 +11,6 @@ public enum CommandName {
     HELP("/help"),
     NO("nocommand"),
     STOP("/stop"),
-    // выбираем район - выбираем поликлинику - отделение врача - врач
-    // todo - добавить дату
-
     CHOOSE("/choose");
 
     private final String commandName;

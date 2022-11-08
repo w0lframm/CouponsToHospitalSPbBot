@@ -9,30 +9,29 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
-import static com.example.couponstohospitalbot.telegram.keyboards.Constants.CHOOSE_DOCTOR;
-import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.findDirectionNameById;
+import static com.example.couponstohospitalbot.telegram.keyboards.Constants.CHOOSE_DIRECTION;
+import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.findHospitalNameById;
 
 @RequiredArgsConstructor
-public class ChooseDoctorCommand implements Command {
+public class ChooseDirectionCommand implements Command {
     private final MessageSender sender;
     SendMessage message;
-    private static final Logger logger = Logger.getLogger(ChooseDoctorCommand.class.getName());
+    private static final Logger logger = Logger.getLogger(ChooseDirectionCommand.class.getName());
 
     @Override
     public void execute(Update update) {
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
-        String directionId = update.getCallbackQuery().getData();
-        logger.info("ChatId = " + chatId + "; DirectionId = " + directionId);
+        String hospitalId = update.getCallbackQuery().getData();
+        logger.info("ChatId = " + chatId + "; HospitalId = " + hospitalId);
         try {
-            message = new SendMessage(chatId.toString(), "Направление: " + findDirectionNameById(chatId, directionId) + CHOOSE_DOCTOR);
-            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).doctorButtons(chatId, directionId));
+            message = new SendMessage(chatId.toString(), "Больница: " + findHospitalNameById(chatId, hospitalId) + CHOOSE_DIRECTION);
+            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).departmentButtons(chatId, hospitalId));
             sender.execute(message);
-        } catch (TelegramApiException | URISyntaxException | IOException e) {
+        } catch (TelegramApiException | IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
