@@ -5,8 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Optional;
 import java.util.logging.Logger;
+
+import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +35,10 @@ public class StateService {
         if (state.getDirectionId() == null) {
             return HospitalCommandName.DIRECTION;
         }
-        if (state.getDoctorId() == null) {
+        if (state.getDoctorId() == null) { //изменить для случая где ответ без разницы (например на отрицательное значение)
             return HospitalCommandName.DOCTOR;
         }
+
         return HospitalCommandName.NO;
     }
 
@@ -94,5 +99,19 @@ public class StateService {
     @Transactional
     public void saveChat(Long chatId) {
         stateRepository.save(new State(chatId));
+    }
+
+    public String getRequestInfo(Long chatId, String doctorId) throws IOException, URISyntaxException {
+        State state = findByChatId(chatId);
+        StringBuilder sb = new StringBuilder("Район: ");
+        sb.append(findRegionNameById(state.getRegionId())).append("\nБольница: ");
+        sb.append(findHospitalNameById(chatId, state.getHospitalId().toString())).append("\nНаправление: ");
+        sb.append(findDirectionNameById(chatId, state.getDirectionId())).append("\nДоктор: ");
+        if (doctorId == null) { //или переделать
+            sb.append("без разницы");
+        } else {
+            sb.append(findDoctorNameById(chatId, doctorId));
+        }
+        return sb.toString();
     }
 }

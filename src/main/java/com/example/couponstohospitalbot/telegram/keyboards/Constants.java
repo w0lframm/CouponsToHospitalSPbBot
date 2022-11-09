@@ -1,7 +1,6 @@
 package com.example.couponstohospitalbot.telegram.keyboards;
 
 import static com.example.couponstohospitalbot.telegram.command.CommandName.*;
-import static com.example.couponstohospitalbot.telegram.command.CommandName.HELP;
 
 public class Constants {
 
@@ -9,6 +8,9 @@ public class Constants {
     public static final String CHOOSE_MESSAGE = ". Выберите район:";
     public static final String CHOOSE_DIRECTION = ". Выберите направление:";
     public static final String CHOOSE_DOCTOR = ". Выберите доктора:";
+    public static final String CONFIRM_MESSAGE = "Подтвердите правильность введенных данных, или измените значения: \n";
+    public static final String WAIT_MESSAGE = "\nЯ пришлю уведомление, как только появятся нужные вам талончики, ожидайте :)";
+    public static final String ANSWER_MESSAGE = "Ура! Появились нужные вам талончики, скорее записывайтесь!\n";
 
 
     public static final String UNKNOWN_MESSAGE = "Не понимаю вас \uD83D\uDE1F, напишите /help чтобы узнать что я понимаю.";

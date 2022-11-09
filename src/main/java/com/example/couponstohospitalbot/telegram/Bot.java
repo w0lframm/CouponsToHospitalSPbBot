@@ -5,6 +5,7 @@ import com.example.couponstohospitalbot.telegram.command.CommandContainer;
 import com.example.couponstohospitalbot.telegram.hospitalCommand.HospitalCommandContainer;
 
 import com.example.couponstohospitalbot.telegram.hospitalCommand.HospitalCommandName;
+import com.example.couponstohospitalbot.telegram.hospitalCommand.NotifyCommand;
 import com.example.couponstohospitalbot.telegram.model.StateService;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.sender.DefaultSender;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import static com.example.couponstohospitalbot.telegram.command.CommandName.*;
+import static com.example.couponstohospitalbot.telegram.hospitalCommand.HospitalCommandName.TRACKING;
 
 @Component
 public class Bot extends TelegramLongPollingBot {
@@ -38,6 +40,7 @@ public class Bot extends TelegramLongPollingBot {
         sender = new DefaultSender(this);
         this.commandContainer = new CommandContainer(sender);
         this.hospitalCommandContainer = new HospitalCommandContainer(sender);
+
         // команды появляются в меню
         List<BotCommand> listOfCommands = new ArrayList<>();
         listOfCommands.add(new BotCommand(START.getCommandName(), "get a welcome message"));
@@ -51,6 +54,9 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
+    public void notifyUser(String chatId, String message) {
+        new NotifyCommand(sender).execute(chatId, message);
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -65,10 +71,13 @@ public class Bot extends TelegramLongPollingBot {
                 }
             }
         } else if (update.hasCallbackQuery()) {
-            String buttonValue = update.getCallbackQuery().getData();
             Long chatId = update.getCallbackQuery().getMessage().getChatId();
-            HospitalCommandName name = ApplicationContextHolder.getContext().getBean(StateService.class).getCurrentState(chatId);
-            hospitalCommandContainer.retrieveCommand(name.getHospitalCommandName()).execute(update);
+            if (update.getCallbackQuery().getData().equals(TRACKING.getHospitalCommandName())) {
+                hospitalCommandContainer.retrieveCommand(TRACKING.getHospitalCommandName()).execute(update);
+            } else {
+                HospitalCommandName name = ApplicationContextHolder.getContext().getBean(StateService.class).getCurrentState(chatId);
+                hospitalCommandContainer.retrieveCommand(name.getHospitalCommandName()).execute(update);
+            }
         }
     }
 

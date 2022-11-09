@@ -22,6 +22,7 @@ public class HospitalCommandContainer {
                 .put(DIRECTION.getHospitalCommandName(), new ChooseDoctorCommand(sender))
                 .put(DOCTOR.getHospitalCommandName(), new SubmitCommand(sender))
                 .put(NO.getHospitalCommandName(), new NoCommand(sender))
+                .put(TRACKING.getHospitalCommandName(), new TrackingCommand(sender))
                 .build();
     }
 

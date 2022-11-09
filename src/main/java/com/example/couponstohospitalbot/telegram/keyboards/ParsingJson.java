@@ -120,4 +120,15 @@ public class ParsingJson {
         }
         return null;
     }
+
+    public static String  findDoctorNameById(Long chatId, String doctorId) throws IOException, URISyntaxException {
+        State state = ApplicationContextHolder.getContext().getBean(StateService.class).findByChatId(chatId);
+        JSONArray arrayDoctor = getDoctorsList(state.getHospitalId(), state.getDirectionId());
+        for (int i = 0; i < arrayDoctor.length(); i++) {
+            if (arrayDoctor.getJSONObject(i).get("id").equals(doctorId)) {
+                return arrayDoctor.getJSONObject(i).get("name").toString();
+            }
+        }
+        return null;
+    }
 }

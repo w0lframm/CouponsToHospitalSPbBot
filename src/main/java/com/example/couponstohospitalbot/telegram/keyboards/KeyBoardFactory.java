@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.logging.Logger;
 
+import static com.example.couponstohospitalbot.telegram.hospitalCommand.HospitalCommandName.TRACKING;
 import static com.example.couponstohospitalbot.telegram.keyboards.Shortener.*;
 
 @Service
@@ -131,7 +132,7 @@ public class KeyBoardFactory {
             logger.warning("expect choice hospital, but something went wrong");
             return null;
         }
-        stateService.saveDirection(chatId, state.getDirectionId()); //сохранение выбора направления
+        stateService.saveDirection(chatId, directionId); //сохранение выбора направления
         JSONArray array = null;
         try {
             array = ParsingJson.getDoctorsList(state.getHospitalId(), directionId);
@@ -156,7 +157,7 @@ public class KeyBoardFactory {
             }
             List<InlineKeyboardButton> rowInline = new ArrayList<>();
             InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton(doctorName + tickets);  //отправляем сокращенное имя и колво талонов
-            inlineKeyboardButton.setCallbackData(jsObj.get("id").toString());                     //получаем id
+            inlineKeyboardButton.setCallbackData(jsObj.get("id").toString());                                 //получаем id
             rowInline.add(inlineKeyboardButton);
             rowsInline.add(rowInline);
         }
@@ -168,4 +169,22 @@ public class KeyBoardFactory {
         return inlineKeyboard;
     }
 
+    public ReplyKeyboard submitButton(Long chatId, String doctorId) {
+        stateService.saveDoctor(chatId, doctorId);
+        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+
+        List<InlineKeyboardButton> rowInline = new ArrayList<>();
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton("Подтвердить");
+        inlineKeyboardButton.setCallbackData(TRACKING.getHospitalCommandName());
+        rowInline.add(inlineKeyboardButton);
+
+        inlineKeyboardButton = new InlineKeyboardButton("Назад"); //еще нет реализации
+        inlineKeyboardButton.setCallbackData("/back");
+        rowInline.add(inlineKeyboardButton);
+        rowsInline.add(rowInline);
+
+        inlineKeyboard.setKeyboard(rowsInline);
+        return inlineKeyboard;
+    }
 }
