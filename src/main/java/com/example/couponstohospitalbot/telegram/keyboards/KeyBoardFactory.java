@@ -24,12 +24,19 @@ public class KeyBoardFactory {
 
     private static final Logger logger = Logger.getLogger(KeyBoardFactory.class.getName());
     private final StateService stateService;
+    private static final String BACK = "Назад";
+    private static final String ALL_DOCTORS = "Без разницы";
 
-    public ReplyKeyboard regionButtons(Long chatId) throws IOException, URISyntaxException {
+    public ReplyKeyboard regionButtons(Long chatId, Boolean flag) throws IOException, URISyntaxException {
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         JSONArray array = ParsingJson.getRegionsList();
-        stateService.saveChat(chatId); //обновили обращение
+        State state = stateService.findByChatId(chatId);
+        if(flag){
+            stateService.saveBackRegion(chatId);
+        }else {
+            stateService.saveChat(chatId); //обновили обращение
+        }
         for (int i = 0; i < array.length(); i++) {
             JSONObject jsObj = array.getJSONObject(i);
             List<InlineKeyboardButton> rowInline = new ArrayList<>();
@@ -42,16 +49,20 @@ public class KeyBoardFactory {
         return inlineKeyboard;
     }
 
-
     public ReplyKeyboard hospitalButtons(Long chatId, String regionId) throws IOException, URISyntaxException {
         State state = stateService.findByChatId(chatId);
-        if (state == null || state.getRegionId() != null) {
+        if (state == null) {
             //сделать проверку поадекватнее, работает криво
             //кнопки нажаты не в том порядке, вывести сообщение об этом (если хотите отменить предыдущий выбор, нажмите кнопку назад)
             logger.warning("expect choice region, but something went wrong");
             return null;
         }
-        stateService.saveRegion(chatId, regionId); //сохранение выбора района
+        if(regionId==BACK) {
+            regionId = state.getRegionId();
+            stateService.saveBackHospital(chatId);
+        } else {
+            stateService.saveRegion(chatId, regionId); //сохранение выбора района
+        }
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         JSONArray array = ParsingJson.getHospitalList(regionId);
@@ -79,7 +90,7 @@ public class KeyBoardFactory {
             rowsInline.add(rowInline);
         }
         //добавить кнопку назад
-
+        rowsInline.add(addBackButton());
         inlineKeyboard.setKeyboard(rowsInline);
         return inlineKeyboard;
     }
@@ -87,14 +98,20 @@ public class KeyBoardFactory {
 
     public ReplyKeyboard departmentButtons(Long chatId, String hospitalId) throws URISyntaxException, IOException {
         State state = stateService.findByChatId(chatId);
-        if (state == null || state.getRegionId() == null || state.getHospitalId() != null) {
+        if (state == null || state.getRegionId() == null) {
             //сделать проверку поадекватнее, работает криво
             //кнопки нажаты не в том порядке, вывести сообщение об этом (если хотите отменить предыдущий выбор, нажмите кнопку назад)
             logger.warning("expect choice hospital, but something went wrong");
             return null;
         }
-        int hospId = Integer.parseInt(hospitalId);
-        stateService.saveHospital(chatId, hospId); //сохранение выбора больницы
+        int hospId;
+        if(hospitalId==BACK) {
+            hospId = state.getHospitalId();
+            stateService.saveBackDirection(chatId);
+        } else {
+            hospId = Integer.parseInt(hospitalId);
+            stateService.saveHospital(chatId, hospId); //сохранение выбора больницы
+        }
         JSONArray array = ParsingJson.getDirectionsList(hospId);
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
@@ -117,22 +134,21 @@ public class KeyBoardFactory {
         }
 
         //добавить кнопку назад
+        rowsInline.add(addBackButton());
 
         inlineKeyboard.setKeyboard(rowsInline);
         return inlineKeyboard;
     }
 
-
-
     public ReplyKeyboard doctorButtons(Long chatId, String directionId) {
         State state = stateService.findByChatId(chatId);
-        if (state == null || state.getRegionId() == null || state.getHospitalId() == null || state.getDirectionId() != null) {
+        if (state == null || state.getRegionId() == null || state.getHospitalId() == null || state.getDirectionId()!=null) {
             //сделать проверку поадекватнее, работает криво
             //кнопки нажаты не в том порядке, вывести сообщение об этом (если хотите отменить предыдущий выбор, нажмите кнопку назад)
             logger.warning("expect choice hospital, but something went wrong");
             return null;
         }
-        stateService.saveDirection(chatId, directionId); //сохранение выбора направления
+            stateService.saveDirection(chatId, directionId); //сохранение выбора направления
         JSONArray array = null;
         try {
             array = ParsingJson.getDoctorsList(state.getHospitalId(), directionId);
@@ -162,9 +178,15 @@ public class KeyBoardFactory {
             rowsInline.add(rowInline);
         }
 
-        //добавить кнопку назад
         //добавить кнопку без разницы какой доктор (отслеживать только направление)
+        List<InlineKeyboardButton> rowInline = new ArrayList<>();
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton(ALL_DOCTORS);
+        inlineKeyboardButton.setCallbackData("-1");
+        rowInline.add(inlineKeyboardButton);
+        rowsInline.add(rowInline);
 
+        //назад
+        rowsInline.add(addBackButton());
         inlineKeyboard.setKeyboard(rowsInline);
         return inlineKeyboard;
     }
@@ -178,13 +200,18 @@ public class KeyBoardFactory {
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton("Подтвердить");
         inlineKeyboardButton.setCallbackData(TRACKING.getHospitalCommandName());
         rowInline.add(inlineKeyboardButton);
-
-        inlineKeyboardButton = new InlineKeyboardButton("Назад"); //еще нет реализации
-        inlineKeyboardButton.setCallbackData("/back");
-        rowInline.add(inlineKeyboardButton);
         rowsInline.add(rowInline);
 
         inlineKeyboard.setKeyboard(rowsInline);
         return inlineKeyboard;
     }
+
+    public List<InlineKeyboardButton> addBackButton() {
+        List<InlineKeyboardButton> rowInline = new ArrayList<>();
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton(BACK);
+        inlineKeyboardButton.setCallbackData(BACK);
+        rowInline.add(inlineKeyboardButton);
+        return  rowInline;
+    }
 }
+

@@ -34,7 +34,6 @@ public class Bot extends TelegramLongPollingBot {
     private static final Logger logger = Logger.getLogger(Bot.class.getName());
     MessageSender sender;
 
-
     public Bot(BotProperties botProperties) {
         this.botProperties = botProperties;
         sender = new DefaultSender(this);

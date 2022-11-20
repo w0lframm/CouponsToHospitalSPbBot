@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -107,11 +108,47 @@ public class StateService {
         sb.append(findRegionNameById(state.getRegionId())).append("\nБольница: ");
         sb.append(findHospitalNameById(chatId, state.getHospitalId().toString())).append("\nНаправление: ");
         sb.append(findDirectionNameById(chatId, state.getDirectionId())).append("\nДоктор: ");
-        if (doctorId == null) { //или переделать
+        if (Objects.equals(doctorId, "-1")) { //или переделать
             sb.append("без разницы");
         } else {
             sb.append(findDoctorNameById(chatId, doctorId));
         }
         return sb.toString();
+    }
+
+    @Transactional
+    public void saveBackHospital(Long chatId) {
+        Optional<State> optionalState = stateRepository.findByChatId(chatId);
+        if (optionalState.isEmpty()) {
+            logger.info("can't save hospital back- chat is empty");
+            return;
+        }
+        State state = optionalState.get();
+        state.setHospitalId(null);
+        stateRepository.save(state);
+    }
+
+    @Transactional
+    public void saveBackRegion(Long chatId) {
+        Optional<State> optionalState = stateRepository.findByChatId(chatId);
+        if (optionalState.isEmpty()) {
+            logger.info("can't save hospital back - chat is empty");
+            return;
+        }
+        State state = optionalState.get();
+        state.setRegionId(null);
+        stateRepository.save(state);
+    }
+
+    @Transactional
+    public void saveBackDirection(Long chatId) {
+        Optional<State> optionalState = stateRepository.findByChatId(chatId);
+        if (optionalState.isEmpty()) {
+            logger.info("can't save direction back - chat is empty");
+            return;
+        }
+        State state = optionalState.get();
+        state.setDirectionId(null);
+        stateRepository.save(state);
     }
 }

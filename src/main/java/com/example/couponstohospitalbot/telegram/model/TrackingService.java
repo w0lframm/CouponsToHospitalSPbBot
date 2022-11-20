@@ -39,7 +39,7 @@ public class TrackingService {
                         JSONArray result = getDoctorsList(tracking.getHospitalId(), tracking.getDirectionId());
 
                         for (int i = 0; i < result.length(); i++) {
-                            if ((tracking.getDoctorId() == null || result.getJSONObject(i).get("id").equals(tracking.getDoctorId())) &&
+                            if ((Objects.equals(tracking.getDoctorId(), "-1") || result.getJSONObject(i).get("id").equals(tracking.getDoctorId())) &&
                                     (int) result.getJSONObject(i).get("freeTicketCount") > 0) {
                                 String mess = ANSWER_MESSAGE + "\n" + getRequestInfo(trackId); // добавить ссылку на регистрацию
                                 setFinished(trackId);
@@ -81,7 +81,7 @@ public class TrackingService {
         sb.append(findRegionNameById(tracking.getRegionId())).append("\nБольница: ");
         sb.append(findHospitalNameById(tracking.getChatId(), tracking.getHospitalId().toString())).append("\nНаправление: ");
         sb.append(findDirectionNameById(tracking.getChatId(), tracking.getDirectionId())).append("\nДоктор: ");
-        if (tracking.getDoctorId() == null) { //или переделать на другую логику
+        if (Objects.equals(tracking.getDoctorId(), "-1")) { //или переделать на другую логику
             sb.append("без разницы");
         } else {
             sb.append(findDoctorNameById(tracking.getChatId(), tracking.getDoctorId()));

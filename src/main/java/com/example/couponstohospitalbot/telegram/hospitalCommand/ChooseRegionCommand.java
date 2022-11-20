@@ -28,7 +28,7 @@ public class ChooseRegionCommand implements Command {
         logger.info("ChatId = " + chatId);
         message = new SendMessage(chatId.toString(), CHOOSE_MESSAGE);
         try {
-            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).regionButtons(chatId));
+            message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).regionButtons(chatId, false));
             sender.execute(message);
         } catch (IOException | URISyntaxException | TelegramApiException e) {
             e.printStackTrace();
