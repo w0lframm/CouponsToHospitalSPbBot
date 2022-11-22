@@ -40,7 +40,7 @@ public class StateService {
             return HospitalCommandName.DOCTOR;
         }
 
-        return HospitalCommandName.NO;
+        return HospitalCommandName.TRACKING;
     }
 
     @Transactional
@@ -149,6 +149,18 @@ public class StateService {
         }
         State state = optionalState.get();
         state.setDirectionId(null);
+        stateRepository.save(state);
+    }
+
+    @Transactional
+    public void saveBackDoctor(Long chatId) {
+        Optional<State> optionalState = stateRepository.findByChatId(chatId);
+        if (optionalState.isEmpty()) {
+            logger.info("can't save doctor back - chat is empty");
+            return;
+        }
+        State state = optionalState.get();
+        state.setDoctorId(null);
         stateRepository.save(state);
     }
 }

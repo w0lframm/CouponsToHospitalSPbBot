@@ -16,6 +16,8 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import static com.example.couponstohospitalbot.telegram.hospitalCommand.HospitalCommandName.TRACKING;
+import static com.example.couponstohospitalbot.telegram.keyboards.Constants.ALL_DOCTORS;
+import static com.example.couponstohospitalbot.telegram.keyboards.Constants.BACK;
 import static com.example.couponstohospitalbot.telegram.keyboards.Shortener.*;
 
 @Service
@@ -24,14 +26,11 @@ public class KeyBoardFactory {
 
     private static final Logger logger = Logger.getLogger(KeyBoardFactory.class.getName());
     private final StateService stateService;
-    private static final String BACK = "Назад";
-    private static final String ALL_DOCTORS = "Без разницы";
 
     public ReplyKeyboard regionButtons(Long chatId, Boolean flag) throws IOException, URISyntaxException {
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         JSONArray array = ParsingJson.getRegionsList();
-        State state = stateService.findByChatId(chatId);
         if(flag){
             stateService.saveBackRegion(chatId);
         }else {
@@ -51,13 +50,13 @@ public class KeyBoardFactory {
 
     public ReplyKeyboard hospitalButtons(Long chatId, String regionId) throws IOException, URISyntaxException {
         State state = stateService.findByChatId(chatId);
-        if (state == null) {
-            //сделать проверку поадекватнее, работает криво
-            //кнопки нажаты не в том порядке, вывести сообщение об этом (если хотите отменить предыдущий выбор, нажмите кнопку назад)
-            logger.warning("expect choice region, but something went wrong");
-            return null;
-        }
-        if(regionId==BACK) {
+//        if (state == null) {
+//            //сделать проверку поадекватнее, работает криво
+//            //кнопки нажаты не в том порядке, вывести сообщение об этом (если хотите отменить предыдущий выбор, нажмите кнопку назад)
+//            logger.warning("expect choice region, but something went wrong");
+//            return null;
+//        }
+        if(regionId.equals(BACK)) {
             regionId = state.getRegionId();
             stateService.saveBackHospital(chatId);
         } else {
@@ -98,14 +97,13 @@ public class KeyBoardFactory {
 
     public ReplyKeyboard departmentButtons(Long chatId, String hospitalId) throws URISyntaxException, IOException {
         State state = stateService.findByChatId(chatId);
-        if (state == null || state.getRegionId() == null) {
-            //сделать проверку поадекватнее, работает криво
-            //кнопки нажаты не в том порядке, вывести сообщение об этом (если хотите отменить предыдущий выбор, нажмите кнопку назад)
-            logger.warning("expect choice hospital, but something went wrong");
-            return null;
-        }
+//        if (state == null || state.getRegionId() == null) { //для кнопок назад работать не будет
+//            //сделать проверку поадекватнее, работает криво
+//            logger.warning("expect choice hospital, but something went wrong");
+//            return null;
+//        }
         int hospId;
-        if(hospitalId==BACK) {
+        if(hospitalId.equals(BACK)) {
             hospId = state.getHospitalId();
             stateService.saveBackDirection(chatId);
         } else {
@@ -135,25 +133,28 @@ public class KeyBoardFactory {
 
         //добавить кнопку назад
         rowsInline.add(addBackButton());
-
         inlineKeyboard.setKeyboard(rowsInline);
         return inlineKeyboard;
     }
 
     public ReplyKeyboard doctorButtons(Long chatId, String directionId) {
         State state = stateService.findByChatId(chatId);
-        if (state == null || state.getRegionId() == null || state.getHospitalId() == null || state.getDirectionId()!=null) {
-            //сделать проверку поадекватнее, работает криво
-            //кнопки нажаты не в том порядке, вывести сообщение об этом (если хотите отменить предыдущий выбор, нажмите кнопку назад)
-            logger.warning("expect choice hospital, but something went wrong");
-            return null;
-        }
+//        if (state == null || state.getRegionId() == null || state.getHospitalId() == null || state.getDirectionId()!=null) {
+//            //сделать проверку поадекватнее, работает криво
+//            logger.warning("expect choice hospital, but something went wrong");
+//            return null;
+//        }
+        if(directionId.equals(BACK)) {
+            directionId = state.getDirectionId();
+            stateService.saveBackDoctor(chatId);
+        } else {
             stateService.saveDirection(chatId, directionId); //сохранение выбора направления
+        }
         JSONArray array = null;
         try {
             array = ParsingJson.getDoctorsList(state.getHospitalId(), directionId);
         } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();  //вот тут можно отслеживать наличие талонов на направление?
+            e.printStackTrace();
         }
 
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
@@ -202,6 +203,8 @@ public class KeyBoardFactory {
         rowInline.add(inlineKeyboardButton);
         rowsInline.add(rowInline);
 
+        //назад
+        rowsInline.add(addBackButton());
         inlineKeyboard.setKeyboard(rowsInline);
         return inlineKeyboard;
     }

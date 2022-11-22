@@ -71,12 +71,12 @@ public class Bot extends TelegramLongPollingBot {
             }
         } else if (update.hasCallbackQuery()) {
             Long chatId = update.getCallbackQuery().getMessage().getChatId();
-            if (update.getCallbackQuery().getData().equals(TRACKING.getHospitalCommandName())) {
-                hospitalCommandContainer.retrieveCommand(TRACKING.getHospitalCommandName()).execute(update);
-            } else {
+//            if (update.getCallbackQuery().getData().equals(TRACKING.getHospitalCommandName())) {
+//                hospitalCommandContainer.retrieveCommand(TRACKING.getHospitalCommandName()).execute(update);
+//            } else {
                 HospitalCommandName name = ApplicationContextHolder.getContext().getBean(StateService.class).getCurrentState(chatId);
                 hospitalCommandContainer.retrieveCommand(name.getHospitalCommandName()).execute(update);
-            }
+//            }
         }
     }
 

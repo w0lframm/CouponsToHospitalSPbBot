@@ -4,6 +4,8 @@ import static com.example.couponstohospitalbot.telegram.command.CommandName.*;
 
 public class Constants {
 
+    public static final String ALL_DOCTORS = "Без разницы";
+    public static final String BACK = "Назад";
     public static final String CHOOSE_HOSPITAL = ". Выберите больницу:";
     public static final String CHOOSE_MESSAGE = ". Выберите район:";
     public static final String CHOOSE_DIRECTION = ". Выберите направление:";

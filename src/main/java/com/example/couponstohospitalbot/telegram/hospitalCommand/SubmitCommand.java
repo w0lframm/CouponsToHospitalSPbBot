@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Objects;
@@ -23,7 +24,6 @@ public class SubmitCommand implements Command {
     private final MessageSender sender;
     SendMessage message;
     private static final Logger logger = Logger.getLogger(SubmitCommand.class.getName());
-    private static final String BACK = "Назад";
     private static final String ALL_DOCTORS = "Без разницы";
 
     @Override
