@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import static com.example.couponstohospitalbot.telegram.keyboards.Constants.ALL_DOCTORS;
 import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.*;
 
 @Service
@@ -108,10 +109,24 @@ public class StateService {
         sb.append(findRegionNameById(state.getRegionId())).append("\nБольница: ");
         sb.append(findHospitalNameById(chatId, state.getHospitalId().toString())).append("\nНаправление: ");
         sb.append(findDirectionNameById(chatId, state.getDirectionId())).append("\nДоктор: ");
-        if (Objects.equals(doctorId, "-1")) { //или переделать
-            sb.append("без разницы");
+        if (Objects.equals(doctorId, "-1")) {
+            sb.append(ALL_DOCTORS);
         } else {
             sb.append(findDoctorNameById(chatId, doctorId));
+        }
+        return sb.toString();
+    }
+
+    public String getRequestInfo(Long chatId) throws IOException, URISyntaxException {
+        State state = findByChatId(chatId);
+        StringBuilder sb = new StringBuilder("Район: ");
+        sb.append(findRegionNameById(state.getRegionId())).append("\nБольница: ");
+        sb.append(findHospitalNameById(chatId, state.getHospitalId().toString())).append("\nНаправление: ");
+        sb.append(findDirectionNameById(chatId, state.getDirectionId())).append("\nДоктор: ");
+        if (state.getDoctorId().equals(ALL_DOCTORS)) {
+            sb.append(ALL_DOCTORS);
+        } else {
+            sb.append(findDoctorNameById(chatId, state.getDoctorId()));
         }
         return sb.toString();
     }

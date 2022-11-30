@@ -12,6 +12,7 @@ import org.telegram.abilitybots.api.sender.DefaultSender;
 import org.telegram.abilitybots.api.sender.MessageSender;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
@@ -22,7 +23,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import static com.example.couponstohospitalbot.telegram.command.CommandName.*;
-import static com.example.couponstohospitalbot.telegram.hospitalCommand.HospitalCommandName.TRACKING;
 
 @Component
 public class Bot extends TelegramLongPollingBot {
@@ -70,19 +70,23 @@ public class Bot extends TelegramLongPollingBot {
                 }
             }
         } else if (update.hasCallbackQuery()) {
+            DeleteMessage deleteMessage = new DeleteMessage();
             Long chatId = update.getCallbackQuery().getMessage().getChatId();
-//            if (update.getCallbackQuery().getData().equals(TRACKING.getHospitalCommandName())) {
-//                hospitalCommandContainer.retrieveCommand(TRACKING.getHospitalCommandName()).execute(update);
-//            } else {
-                HospitalCommandName name = ApplicationContextHolder.getContext().getBean(StateService.class).getCurrentState(chatId);
-                hospitalCommandContainer.retrieveCommand(name.getHospitalCommandName()).execute(update);
-//            }
+            deleteMessage.setChatId(chatId.toString());
+            deleteMessage.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+            try {
+                execute(deleteMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+            HospitalCommandName name = ApplicationContextHolder.getContext().getBean(StateService.class).getCurrentState(chatId);
+            hospitalCommandContainer.retrieveCommand(name.getHospitalCommandName()).execute(update);
         }
     }
 
 
     @Override
-    public void onClosing() { //?? работает ли?
+    public void onClosing() {
         super.onClosing();
     }
 

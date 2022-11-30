@@ -21,7 +21,7 @@ import static com.example.couponstohospitalbot.telegram.keyboards.Constants.BACK
 import static com.example.couponstohospitalbot.telegram.keyboards.Constants.WAIT_MESSAGE;
 
 @RequiredArgsConstructor
-public class TrackingCommand implements Command{
+public class TrackingCommand implements Command {
     private final MessageSender sender;
     SendMessage message;
     private static final Logger logger = Logger.getLogger(TrackingCommand.class.getName());
@@ -45,9 +45,10 @@ public class TrackingCommand implements Command{
         } else {
             ApplicationContextHolder.getContext().getBean(TrackingService.class).addEvent(trackId); //добавляем в отслеживание еще одно событие
             try {
-                message = new SendMessage(chatId.toString(), WAIT_MESSAGE);
+                message = new SendMessage(chatId.toString(),
+                        ApplicationContextHolder.getContext().getBean(StateService.class).getRequestInfo(chatId) + "\n" + WAIT_MESSAGE);
                 sender.execute(message);
-            } catch (TelegramApiException e) {
+            } catch (TelegramApiException | URISyntaxException | IOException e) {
                 e.printStackTrace();
             }
         }
