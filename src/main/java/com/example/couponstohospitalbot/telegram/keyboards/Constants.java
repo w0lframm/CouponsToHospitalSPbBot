@@ -23,7 +23,7 @@ public class Constants {
 
     public static final String NO_MESSAGE = "Я поддерживаю команды, начинающиеся со слеша(/).\n"
             + "Чтобы посмотреть список команд введите /help";
-    public static final String HELP_MESSAGE = String.format("✨ <b> Дотупные команды </b> ✨\n\n"
+    public static final String HELP_MESSAGE = String.format("✨ <b> Доступные команды </b> ✨\n\n"
 
                     + "<b> Начать\\закончить работу с ботом </b>\n"
                     + "%s - начать работу со мной\n"
