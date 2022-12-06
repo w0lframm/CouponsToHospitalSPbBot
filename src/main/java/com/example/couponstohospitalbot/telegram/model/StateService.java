@@ -123,7 +123,7 @@ public class StateService {
         sb.append(findRegionNameById(state.getRegionId())).append("\nБольница: ");
         sb.append(findHospitalNameById(chatId, state.getHospitalId().toString())).append("\nНаправление: ");
         sb.append(findDirectionNameById(chatId, state.getDirectionId())).append("\nДоктор: ");
-        if (state.getDoctorId().equals(ALL_DOCTORS)) {
+        if (state.getDoctorId().equals("-1")) {
             sb.append(ALL_DOCTORS);
         } else {
             sb.append(findDoctorNameById(chatId, state.getDoctorId()));
