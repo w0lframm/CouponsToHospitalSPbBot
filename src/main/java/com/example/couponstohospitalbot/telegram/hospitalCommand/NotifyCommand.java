@@ -13,6 +13,7 @@ public class NotifyCommand {
     public void execute(String chatId, String mess) {
         try {
             message = new SendMessage(chatId, mess);
+            message.enableHtml(true);
             sender.execute(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();

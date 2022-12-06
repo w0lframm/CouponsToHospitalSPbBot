@@ -22,6 +22,7 @@ public class StartCommand implements Command {
     public void execute(Update update) {
         message = new SendMessage(update.getMessage().getChatId().toString(), START_MESSAGE);
         try {
+            message.enableHtml(true);
             sender.execute(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();

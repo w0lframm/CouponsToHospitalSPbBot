@@ -38,6 +38,7 @@ public class TrackingCommand implements Command {
             try {
                 message = new SendMessage(chatId.toString(), "Повторите выбор доктора: ");
                 message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).doctorButtons(chatId, BACK));
+                message.enableHtml(true);
                 sender.execute(message);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
@@ -47,6 +48,7 @@ public class TrackingCommand implements Command {
             try {
                 message = new SendMessage(chatId.toString(),
                         ApplicationContextHolder.getContext().getBean(StateService.class).getRequestInfo(chatId) + "\n" + WAIT_MESSAGE);
+                message.enableHtml(true);
                 sender.execute(message);
             } catch (TelegramApiException | URISyntaxException | IOException e) {
                 e.printStackTrace();

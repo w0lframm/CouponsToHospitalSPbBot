@@ -19,6 +19,7 @@ public class UnknownCommand implements Command {
     public void execute(Update update) {
         message = new SendMessage(update.getMessage().getChatId().toString(), UNKNOWN_MESSAGE);
         try {
+            message.enableHtml(true);
             sender.execute(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();

@@ -33,6 +33,7 @@ public class ChooseDoctorCommand implements Command {
             logger.info("ChatId = " + chatId + "; Нажата кнопка Назад");
             try {
                 message = new SendMessage(chatId.toString(), "Повторите выбор больницы: ");
+                message.enableHtml(true);
                 message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).hospitalButtons(chatId, BACK));
                 sender.execute(message);
             } catch (TelegramApiException | URISyntaxException | IOException e) {
@@ -42,6 +43,7 @@ public class ChooseDoctorCommand implements Command {
             logger.info("ChatId = " + chatId + "; DirectionId = " + directionId);
             try {
                 message = new SendMessage(chatId.toString(), "Направление: " + findDirectionNameById(chatId, directionId) + CHOOSE_DOCTOR);
+                message.enableHtml(true);
                 message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).doctorButtons(chatId, directionId));
                 sender.execute(message);
             } catch (TelegramApiException | URISyntaxException | IOException e) {

@@ -29,6 +29,7 @@ public class ChooseHospitalCommand implements Command {
         logger.info("ChatId = " + chatId + "; RegionId = " + regionId);
         try {
             message = new SendMessage(chatId.toString(), "Район: " + findRegionNameById(regionId) + CHOOSE_HOSPITAL);
+            message.enableHtml(true);
             message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).hospitalButtons(chatId, regionId));
             sender.execute(message);
         } catch (TelegramApiException | URISyntaxException | IOException e) {
