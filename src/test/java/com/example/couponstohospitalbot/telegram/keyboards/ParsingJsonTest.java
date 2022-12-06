@@ -4,13 +4,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.getRegionsList;
 import static org.junit.jupiter.api.Assertions.*;
-
+@SpringBootTest
 class ParsingJsonTest {
     static JSONArray arrayReg;
 
