@@ -35,6 +35,7 @@ public class SubmitCommand implements Command {
             try {
                 message = new SendMessage(chatId.toString(), "Повторите выбор отделения: ");
                 message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).departmentButtons(chatId, BACK));
+                message.enableHtml(true);
                 sender.execute(message);
             } catch (TelegramApiException | URISyntaxException | IOException e) {
                 e.printStackTrace();
@@ -44,6 +45,7 @@ public class SubmitCommand implements Command {
                 message = new SendMessage(chatId.toString(), CONFIRM_MESSAGE +
                         ApplicationContextHolder.getContext().getBean(StateService.class).getRequestInfo(chatId, doctorId));
                 message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).submitButton(chatId, doctorId));
+                message.enableHtml(true);
                 sender.execute(message);
             } catch (TelegramApiException | URISyntaxException | IOException e) {
                 e.printStackTrace();
