@@ -22,7 +22,6 @@ public class ParsingJson {
     public static JSONArray getHospitalList(String regionId) throws URISyntaxException, IOException {
         HttpClient client = new HttpClient(new URI("https://gorzdrav.spb.ru/_api/api/v2/shared/district/" + regionId + "/lpus"));
         return new JSONObject(client.sendData(HttpClient.HTTP_METHOD.GET).getData()).getJSONArray("result");
-
     }
 
     public static JSONArray getDirectionsList(int hospitalId) throws URISyntaxException, IOException {
