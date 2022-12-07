@@ -33,6 +33,8 @@ public class TrackingService {
     private static final String DISTRICT = "//*[@id='serviceAnotherMan']//li[@data-district-id='";
     private static final String HOSPITAL = "//*[@type='button' and @data-lpu-id='";
     private static final String SPECIALITY = "//*/button[@data-speciality-id='";
+    private static final String url = "https://gorzdrav.spb.ru/service-free-schedule#%5B%7B%22district%22:%22DISTRICTID%22%7D,%7B%22lpu%22:%22HOSPITALID%22%7D,%7B%22speciality%22:%22DIRECTIONID%22%7D%5D";
+    private static final String urlWithDoctor = "https://gorzdrav.spb.ru/service-free-schedule#%5B%7B%22district%22:%22DISTRICTID%22%7D,%7B%22lpu%22:%22HOSPITALID%22%7D,%7B%22speciality%22:%22DIRECTIONID%22%7D,%7B%22doctor%22:%22DOCTORID%22%7D%5D";
 
     public Long initTracking(State state) {
         Tracking tracking = new Tracking(state);
@@ -52,7 +54,8 @@ public class TrackingService {
                         for (int i = 0; i < result.length(); i++) {
                             if ((Objects.equals(tracking.getDoctorId(), "-1") || result.getJSONObject(i).get("id").equals(tracking.getDoctorId())) &&
                                     (int) result.getJSONObject(i).get("freeTicketCount") > 0) {
-                                String url = getUrl(trackId);
+                                //String url = getUrl(trackId);
+                                String url = getLink(trackId);
                                 String mess = ANSWER_MESSAGE + "\n" + getRequestInfo(trackId) + "\nСсылка для записи: " + url; // добавить ссылку на регистрацию
                                 ApplicationContextHolder.getContext().getBean(Bot.class).notifyUser(tracking.getChatId().toString(), mess);
                                 setFinished(trackId);
@@ -60,7 +63,8 @@ public class TrackingService {
                                 break;
                             }
                         }
-                    } catch (URISyntaxException | IOException ignored) {}
+                    } catch (URISyntaxException | IOException ignored) {
+                    }
                 }
                 if (!toDeleteEvents.isEmpty()) {
                     for (Long trackId : toDeleteEvents) { //очищаем список событий
@@ -117,5 +121,21 @@ public class TrackingService {
         url = driver.getCurrentUrl();
         driver.close();
         return url;
+    }
+
+    private String getLink(Long trackId) {
+        Tracking tracking = findById(trackId);
+        if (tracking.getDoctorId().equals("-1")) {
+            return url
+                    .replace("DISTRICTID", tracking.getRegionId())
+                    .replace("HOSPITALID", tracking.getHospitalId().toString())
+                    .replace("DIRECTIONID", tracking.getDirectionId());
+        } else {
+            return urlWithDoctor
+                    .replace("DISTRICTID", tracking.getRegionId())
+                    .replace("HOSPITALID", tracking.getHospitalId().toString())
+                    .replace("DIRECTIONID", tracking.getDirectionId())
+                    .replace("DOCTORID", tracking.getDoctorId());
+        }
     }
 }
