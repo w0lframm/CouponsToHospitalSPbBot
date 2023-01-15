@@ -43,6 +43,10 @@ public class TrackingService {
     }
 
     public Runnable waitCoupons() throws InterruptedException {
+        List<Tracking> list = trackingRepository.getActiveRequests();
+        for (var elem: list) { //для корректного возобновления работы после перезапуска приложения
+            events.add(elem.getTrackId());
+        }
         while (true) {
             TimeUnit.SECONDS.sleep(1); //проверяем с интервалом в минуту
             if (!events.isEmpty()) {
