@@ -107,12 +107,12 @@ public class StateService {
         State state = findByChatId(chatId);
         StringBuilder sb = new StringBuilder("Район: ");
         sb.append(findRegionNameById(state.getRegionId())).append("\nБольница: ");
-        sb.append(findHospitalNameById(chatId, state.getHospitalId().toString())).append("\nНаправление: ");
-        sb.append(findDirectionNameById(chatId, state.getDirectionId())).append("\nДоктор: ");
+        sb.append(findHospitalNameById(state.getHospitalId().toString(), state.getRegionId())).append("\nНаправление: ");
+        sb.append(findDirectionNameById(state.getDirectionId(), state.getHospitalId())).append("\nДоктор: ");
         if (Objects.equals(doctorId, "-1")) {
             sb.append(ALL_DOCTORS);
         } else {
-            sb.append(findDoctorNameById(chatId, doctorId));
+            sb.append(findDoctorNameById(doctorId, state.getHospitalId(), state.getDirectionId()));
         }
         return sb.toString();
     }
@@ -121,12 +121,12 @@ public class StateService {
         State state = findByChatId(chatId);
         StringBuilder sb = new StringBuilder("Район: ");
         sb.append(findRegionNameById(state.getRegionId())).append("\nБольница: ");
-        sb.append(findHospitalNameById(chatId, state.getHospitalId().toString())).append("\nНаправление: ");
-        sb.append(findDirectionNameById(chatId, state.getDirectionId())).append("\nДоктор: ");
+        sb.append(findHospitalNameById(state.getHospitalId().toString(), state.getRegionId())).append("\nНаправление: ");
+        sb.append(findDirectionNameById(state.getDirectionId(), state.getHospitalId())).append("\nДоктор: ");
         if (state.getDoctorId().equals("-1")) {
             sb.append(ALL_DOCTORS);
         } else {
-            sb.append(findDoctorNameById(chatId, state.getDoctorId()));
+            sb.append(findDoctorNameById(state.getDoctorId(), state.getHospitalId(), state.getDirectionId()));
         }
         return sb.toString();
     }

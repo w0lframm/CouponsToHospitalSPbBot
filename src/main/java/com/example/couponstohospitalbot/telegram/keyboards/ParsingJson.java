@@ -1,8 +1,5 @@
 package com.example.couponstohospitalbot.telegram.keyboards;
 
-import com.example.couponstohospitalbot.ApplicationContextHolder;
-import com.example.couponstohospitalbot.telegram.model.State;
-import com.example.couponstohospitalbot.telegram.model.StateService;
 import net.sf.corn.httpclient.HttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,13 +31,6 @@ public class ParsingJson {
         return new JSONObject(client.sendData(HttpClient.HTTP_METHOD.GET).getData()).getJSONArray("result");
     }
 
-    //https://gorzdrav.spb.ru/_api/api/v2/schedule/lpu/289/doctor/52/appointments
-    public static JSONArray getTimetableList(int hospitalId, String doctorId) throws IOException, URISyntaxException {
-        HttpClient client = new HttpClient(new URI("https://gorzdrav.spb.ru/_api/api/v2/schedule/lpu/" + hospitalId + "/doctor/" + doctorId + "/appointments"));
-        return new JSONObject(client.sendData(HttpClient.HTTP_METHOD.GET).getData()).getJSONArray("result");
-    }
-
-
     public static String findRegionIdByName(String region) throws IOException, URISyntaxException {
         JSONArray arrayReg = getRegionsList();
         for (int i = 0; i < arrayReg.length(); i++) {
@@ -61,8 +51,6 @@ public class ParsingJson {
         return null;
     }
 
-
-
     public static Integer findHospitalIdByName(String regionId, String hospName) throws URISyntaxException, IOException {
         JSONArray arrayHosp = getHospitalList(regionId);
         for (int i = 0; i < arrayHosp.length(); i++) {
@@ -73,10 +61,9 @@ public class ParsingJson {
         return -1;
     }
 
-    public static String findHospitalNameById(Long chatId, String hospId) throws URISyntaxException, IOException {
+    public static String findHospitalNameById(String hospId, String regionId) throws URISyntaxException, IOException {
         Integer hospitalId = Integer.parseInt(hospId);
-        State state = ApplicationContextHolder.getContext().getBean(StateService.class).findByChatId(chatId);
-        JSONArray arrayHosp = getHospitalList(state.getRegionId());
+        JSONArray arrayHosp = getHospitalList(regionId);
         for (int i = 0; i < arrayHosp.length(); i++) {
             if (arrayHosp.getJSONObject(i).get("id").equals(hospitalId)) {
                 return arrayHosp.getJSONObject(i).get("lpuFullName").toString();
@@ -84,8 +71,6 @@ public class ParsingJson {
         }
         return null;
     }
-
-
 
     public static String findDirectionIdByName(int hospId, String direction) throws URISyntaxException, IOException {
         JSONArray arrayDir = getDirectionsList(hospId);
@@ -97,9 +82,8 @@ public class ParsingJson {
         return null;
     }
 
-    public static String findDirectionNameById(Long chatId, String directionId) throws URISyntaxException, IOException {
-        State state = ApplicationContextHolder.getContext().getBean(StateService.class).findByChatId(chatId);
-        JSONArray arrayDir = getDirectionsList(state.getHospitalId());
+    public static String findDirectionNameById(String directionId, Integer hospitalId) throws URISyntaxException, IOException {
+        JSONArray arrayDir = getDirectionsList(hospitalId);
         for (int i = 0; i < arrayDir.length(); i++) {
             if (arrayDir.getJSONObject(i).get("id").equals(directionId)) {
                 return arrayDir.getJSONObject(i).get("name").toString();
@@ -107,8 +91,6 @@ public class ParsingJson {
         }
         return null;
     }
-
-
 
     public static String findDoctorIdByName(int hospId, String dirId, String nameDoctor) throws IOException, URISyntaxException {
         JSONArray arrayDir = getDoctorsList(hospId, dirId);
@@ -120,9 +102,8 @@ public class ParsingJson {
         return null;
     }
 
-    public static String  findDoctorNameById(Long chatId, String doctorId) throws IOException, URISyntaxException {
-        State state = ApplicationContextHolder.getContext().getBean(StateService.class).findByChatId(chatId);
-        JSONArray arrayDoctor = getDoctorsList(state.getHospitalId(), state.getDirectionId());
+    public static String  findDoctorNameById(String doctorId, int hospitalId, String directionId) throws IOException, URISyntaxException {
+        JSONArray arrayDoctor = getDoctorsList(hospitalId, directionId);
         for (int i = 0; i < arrayDoctor.length(); i++) {
             if (arrayDoctor.getJSONObject(i).get("id").equals(doctorId)) {
                 return arrayDoctor.getJSONObject(i).get("name").toString();

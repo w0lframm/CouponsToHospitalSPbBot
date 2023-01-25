@@ -13,6 +13,7 @@ public class Constants {
     public static final String CONFIRM_MESSAGE = "Подтвердите правильность введенных данных, или измените значения: \n";
     public static final String WAIT_MESSAGE = "\nЯ пришлю уведомление, как только появятся нужные вам талончики, ожидайте :)";
     public static final String ANSWER_MESSAGE = "Ура! Появились нужные вам талончики, скорее записывайтесь!\n";
+    public static final String EMPTY_COLLECTION = "Коллекция пуста! (Вероятно все остальные запросы еще отслеживаются)";
 
 
     public static final String UNKNOWN_MESSAGE = "Не понимаю вас \uD83D\uDE1F, напишите /help чтобы узнать что я понимаю.";
@@ -27,8 +28,9 @@ public class Constants {
 
                     + "<b> Начать\\закончить работу с ботом </b>\n"
                     + "%s - начать работу со мной\n"
-                    + "%s - приостановить работу со мной\n\n"
-                    + "%s - начать выбор для отслеживания\n\n"
-                    + "%s - получить помощь в работе со мной\n",
-            START.getCommandName(), STOP.getCommandName(), CHOOSE.getCommandName(), HELP.getCommandName());
+                    + "%s - приостановить работу со мной\n"
+                    + "%s - начать выбор для отслеживания\n"
+                    + "%s - посмотреть коллекцию посещений\n"
+                    + "%s - получить помощь в работе со мной",
+            START.getCommandName(), STOP.getCommandName(), CHOOSE.getCommandName(), COLLECTION.getCommandName(), HELP.getCommandName());
 }

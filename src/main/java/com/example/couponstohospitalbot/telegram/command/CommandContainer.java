@@ -1,6 +1,7 @@
 package com.example.couponstohospitalbot.telegram.command;
 
 import com.example.couponstohospitalbot.telegram.Command;
+import com.example.couponstohospitalbot.telegram.collectionCommand.CollectionCommand;
 import com.example.couponstohospitalbot.telegram.hospitalCommand.ChooseRegionCommand;
 import com.google.common.collect.ImmutableMap;
 import org.telegram.abilitybots.api.sender.MessageSender;
@@ -20,6 +21,7 @@ public class CommandContainer {
                 .put(HELP.getCommandName(), new HelpCommand(sender))
                 .put(NO.getCommandName(), new NoCommand(sender))
                 .put(CHOOSE.getCommandName(), new ChooseRegionCommand(sender))
+                .put(COLLECTION.getCommandName(), new CollectionCommand(sender))
                 .build();
 
         unknownCommand = new UnknownCommand(sender);

@@ -3,6 +3,8 @@ package com.example.couponstohospitalbot.telegram.hospitalCommand;
 import com.example.couponstohospitalbot.ApplicationContextHolder;
 import com.example.couponstohospitalbot.telegram.Command;
 import com.example.couponstohospitalbot.telegram.keyboards.KeyBoardFactory;
+import com.example.couponstohospitalbot.telegram.model.State;
+import com.example.couponstohospitalbot.telegram.model.StateService;
 import lombok.RequiredArgsConstructor;
 import org.telegram.abilitybots.api.sender.MessageSender;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -42,7 +44,8 @@ public class ChooseDoctorCommand implements Command {
         } else {
             logger.info("ChatId = " + chatId + "; DirectionId = " + directionId);
             try {
-                message = new SendMessage(chatId.toString(), "Направление: " + findDirectionNameById(chatId, directionId) + CHOOSE_DOCTOR);
+                State state = ApplicationContextHolder.getContext().getBean(StateService.class).findByChatId(chatId);
+                message = new SendMessage(chatId.toString(), "Направление: " + findDirectionNameById(directionId, state.getHospitalId()) + CHOOSE_DOCTOR);
                 message.enableHtml(true);
                 message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).doctorButtons(chatId, directionId));
                 sender.execute(message);

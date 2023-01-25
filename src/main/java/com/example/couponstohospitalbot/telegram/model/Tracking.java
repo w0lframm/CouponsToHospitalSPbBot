@@ -30,6 +30,8 @@ public class Tracking {
 
     @Column(name = "is_finished", nullable = false) //отработал или еще нет
     private Boolean isFinished;
+    @Column(name = "is_deleted", nullable = false) //удален из коллекции или нет
+    private Boolean isDeleted;
 
     public Tracking(State state) {
         chatId = state.getChatId();
@@ -38,5 +40,6 @@ public class Tracking {
         directionId = state.getDirectionId();
         doctorId = state.getDoctorId();
         isFinished = false;
+        isDeleted = false;
     }
 }

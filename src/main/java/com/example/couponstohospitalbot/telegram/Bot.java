@@ -1,6 +1,7 @@
 package com.example.couponstohospitalbot.telegram;
 
 import com.example.couponstohospitalbot.ApplicationContextHolder;
+import com.example.couponstohospitalbot.telegram.collectionCommand.CollectionCommandContainer;
 import com.example.couponstohospitalbot.telegram.command.CommandContainer;
 import com.example.couponstohospitalbot.telegram.hospitalCommand.HospitalCommandContainer;
 
@@ -27,10 +28,10 @@ import static com.example.couponstohospitalbot.telegram.command.CommandName.*;
 @Component
 public class Bot extends TelegramLongPollingBot {
     public static String COMMAND_PREFIX = "/";
-
     private final BotProperties botProperties;
     private final CommandContainer commandContainer;
     private final HospitalCommandContainer hospitalCommandContainer;
+    private final CollectionCommandContainer collectionCommandContainer;
     private static final Logger logger = Logger.getLogger(Bot.class.getName());
     MessageSender sender;
 
@@ -39,15 +40,19 @@ public class Bot extends TelegramLongPollingBot {
         sender = new DefaultSender(this);
         this.commandContainer = new CommandContainer(sender);
         this.hospitalCommandContainer = new HospitalCommandContainer(sender);
+        this.collectionCommandContainer = new CollectionCommandContainer(sender);
 
         // команды появляются в меню
         List<BotCommand> listOfCommands = new ArrayList<>();
         listOfCommands.add(new BotCommand(START.getCommandName(), "get a welcome message"));
-        listOfCommands.add(new BotCommand(STOP.getCommandName(), "get your data stored"));
         listOfCommands.add(new BotCommand(HELP.getCommandName(), "info how to use this bot"));
+        listOfCommands.add(new BotCommand(COLLECTION.getCommandName(), "choose your previous request"));
         listOfCommands.add(new BotCommand(CHOOSE.getCommandName(), "choose your region"));
+        listOfCommands.add(new BotCommand(STOP.getCommandName(), "get your data stored"));
+
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
+            logger.info("commands are set");
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -79,8 +84,13 @@ public class Bot extends TelegramLongPollingBot {
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
-            HospitalCommandName name = ApplicationContextHolder.getContext().getBean(StateService.class).getCurrentState(chatId);
-            hospitalCommandContainer.retrieveCommand(name.getHospitalCommandName()).execute(update);
+            //проверка, что мы в коллекции
+            if (update.getCallbackQuery().getData().startsWith("/col_")) {
+                collectionCommandContainer.retrieveCommand(update.getCallbackQuery().getData()).execute(update);
+            } else {
+                HospitalCommandName name = ApplicationContextHolder.getContext().getBean(StateService.class).getCurrentState(chatId);
+                hospitalCommandContainer.retrieveCommand(name.getHospitalCommandName()).execute(update);
+            }
         }
     }
 
@@ -88,7 +98,7 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onClosing() {
         super.onClosing();
-    }
+    } // работает ли?
 
     @Override
     public String getBotUsername() {

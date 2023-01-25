@@ -10,7 +10,6 @@ public enum HospitalCommandName {
     HOSPITAL("/hospital"),
     DIRECTION("/direction"),
     DOCTOR("/doctor"),
-    NO("/no"), //доделать
     TRACKING("/tracking");
 
     private final String hospitalCommandName;

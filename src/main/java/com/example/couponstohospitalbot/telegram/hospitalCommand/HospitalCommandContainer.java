@@ -1,7 +1,6 @@
 package com.example.couponstohospitalbot.telegram.hospitalCommand;
 
 import com.example.couponstohospitalbot.telegram.Command;
-import com.example.couponstohospitalbot.telegram.command.*;
 import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import org.telegram.abilitybots.api.sender.MessageSender;
@@ -13,7 +12,6 @@ public class HospitalCommandContainer {
 
     private final ImmutableMap<String, Command> commandMap;
 
-
     public HospitalCommandContainer(MessageSender sender) {
 
         commandMap = ImmutableMap.<String, Command> builder()
@@ -21,7 +19,6 @@ public class HospitalCommandContainer {
                 .put(HOSPITAL.getHospitalCommandName(), new ChooseDirectionCommand(sender))
                 .put(DIRECTION.getHospitalCommandName(), new ChooseDoctorCommand(sender))
                 .put(DOCTOR.getHospitalCommandName(), new SubmitCommand(sender))
-                .put(NO.getHospitalCommandName(), new NoCommand(sender))
                 .put(TRACKING.getHospitalCommandName(), new TrackingCommand(sender))
                 .build();
     }

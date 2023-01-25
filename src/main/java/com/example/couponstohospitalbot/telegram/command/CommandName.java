@@ -11,6 +11,7 @@ public enum CommandName {
     HELP("/help"),
     NO("nocommand"),
     STOP("/stop"),
+    COLLECTION("/collection"),
     CHOOSE("/choose");
 
     private final String commandName;
