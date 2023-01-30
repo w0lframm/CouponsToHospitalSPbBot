@@ -58,8 +58,12 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public void notifyUser(String chatId, String message) {
-        new NotifyCommand(sender).execute(chatId, message);
+    public Integer notifyUser(String chatId, String message) {
+        return new NotifyCommand(sender).execute(chatId, message);
+    }
+
+    public void deleteLastNotifyMsg(String chatId, Integer messageId) {
+        new NotifyCommand(sender).deleteLastMsg(chatId, messageId);
     }
 
     @Override

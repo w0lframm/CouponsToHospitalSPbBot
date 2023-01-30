@@ -24,7 +24,7 @@ public class TrackingService {
     private List<Long> toDeleteEvents = new ArrayList<>();
 
     private static final String url = "https://gorzdrav.spb.ru/service-free-schedule#%5B%7B%22district%22:" +
-        "%22DISTRICTID%22%7D,%7B%22lpu%22:%22HOSPITALID%22%7D,%7B%22speciality%22:%22DIRECTIONID%22%7D%5D";
+            "%22DISTRICTID%22%7D,%7B%22lpu%22:%22HOSPITALID%22%7D,%7B%22speciality%22:%22DIRECTIONID%22%7D%5D";
     private static final String urlWithDoctor = "https://gorzdrav.spb.ru/service-free-schedule#%5B%7B%22district%22:" +
             "%22DISTRICTID%22%7D,%7B%22lpu%22:%22HOSPITALID%22%7D,%7B%22speciality%22:" +
             "%22DIRECTIONID%22%7D,%7B%22doctor%22:%22DOCTORID%22%7D%5D";
@@ -45,7 +45,7 @@ public class TrackingService {
 
     public Runnable waitCoupons() throws InterruptedException {
         List<Tracking> list = trackingRepository.getActiveRequests();
-        for (var elem: list) { //для корректного возобновления работы после перезапуска приложения
+        for (var elem : list) { //для корректного возобновления работы после перезапуска приложения
             events.add(elem.getTrackId());
         }
         while (true) {
@@ -60,9 +60,11 @@ public class TrackingService {
                             if ((Objects.equals(tracking.getDoctorId(), "-1") ||
                                     result.getJSONObject(i).get("id").equals(tracking.getDoctorId())) &&
                                     (int) result.getJSONObject(i).get("freeTicketCount") > 0) {
+                                logger.info("Coupon found");
                                 String url = getLink(trackId);
                                 String mess = ANSWER_MESSAGE + "\n" + getRequestInfo(trackId) + "\nСсылка для записи: " + url;
                                 ApplicationContextHolder.getContext().getBean(Bot.class).notifyUser(tracking.getChatId().toString(), mess);
+                                alarm(tracking.getChatId().toString());
                                 setFinished(trackId);
                                 toDeleteEvents.add(trackId);
                                 break;
@@ -80,7 +82,6 @@ public class TrackingService {
             }
         }
     }
-
 
     private Tracking findById(Long trackId) {
         Optional<Tracking> optionalTracking = trackingRepository.findById(trackId);
@@ -125,5 +126,10 @@ public class TrackingService {
                     .replace("DIRECTIONID", tracking.getDirectionId())
                     .replace("DOCTORID", tracking.getDoctorId());
         }
+    }
+
+    private void alarm(String chatId) {
+        AlarmThread alarm = new AlarmThread(chatId);
+        alarm.start();
     }
 }
