@@ -13,12 +13,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static com.example.couponstohospitalbot.telegram.keyboards.Constants.ANSWER_MESSAGE;
+import static com.example.couponstohospitalbot.telegram.keyboards.Constants.STOP_ALARM;
 import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.*;
 
 @Service
 @RequiredArgsConstructor
 public class TrackingService {
     private final TrackingRepository trackingRepository;
+    private AlarmThread alarm;
     private static final Logger logger = Logger.getLogger(TrackingService.class.getName());
     private final List<Long> events = new LinkedList<>();
     private List<Long> toDeleteEvents = new ArrayList<>();
@@ -55,16 +57,15 @@ public class TrackingService {
                     try {
                         Tracking tracking = findById(trackId);
                         JSONArray result = getDoctorsList(tracking.getHospitalId(), tracking.getDirectionId());
-
                         for (int i = 0; i < result.length(); i++) {
                             if ((Objects.equals(tracking.getDoctorId(), "-1") ||
                                     result.getJSONObject(i).get("id").equals(tracking.getDoctorId())) &&
                                     (int) result.getJSONObject(i).get("freeTicketCount") > 0) {
                                 logger.info("Coupon found");
                                 String url = getLink(trackId);
-                                String mess = ANSWER_MESSAGE + "\n" + getRequestInfo(trackId) + "\nСсылка для записи: " + url;
+                                String mess = ANSWER_MESSAGE + "\n" + getRequestInfo(trackId) + "\nСсылка для записи: " + url + "\n\n" + STOP_ALARM;
                                 ApplicationContextHolder.getContext().getBean(Bot.class).notifyUser(tracking.getChatId().toString(), mess);
-                                alarm(tracking.getChatId().toString());
+                                alarmStart(tracking.getChatId().toString());
                                 setFinished(trackId);
                                 toDeleteEvents.add(trackId);
                                 break;
@@ -128,8 +129,14 @@ public class TrackingService {
         }
     }
 
-    private void alarm(String chatId) {
-        AlarmThread alarm = new AlarmThread(chatId);
+    private void alarmStart(String chatId) {
+        alarm = new AlarmThread(chatId);
         alarm.start();
+    }
+
+    public void alarmStop() {
+        if (alarm != null) {
+            alarm.interrupt();
+        }
     }
 }

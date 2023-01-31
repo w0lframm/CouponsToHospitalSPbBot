@@ -49,6 +49,8 @@ public class Bot extends TelegramLongPollingBot {
         listOfCommands.add(new BotCommand(COLLECTION.getCommandName(), "choose your previous request"));
         listOfCommands.add(new BotCommand(CHOOSE.getCommandName(), "choose your region"));
         listOfCommands.add(new BotCommand(STOP.getCommandName(), "get your data stored"));
+        listOfCommands.add(new BotCommand(STOP_ALARM.getCommandName(), "stop alarm when coupon found"));
+
 
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));

@@ -22,6 +22,7 @@ public class CommandContainer {
                 .put(NO.getCommandName(), new NoCommand(sender))
                 .put(CHOOSE.getCommandName(), new ChooseRegionCommand(sender))
                 .put(COLLECTION.getCommandName(), new CollectionCommand(sender))
+                .put(STOP_ALARM.getCommandName(), new StopAlarmCommand(sender))
                 .build();
 
         unknownCommand = new UnknownCommand(sender);
