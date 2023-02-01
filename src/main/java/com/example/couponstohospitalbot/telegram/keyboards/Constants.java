@@ -11,7 +11,9 @@ public class Constants {
     public static final String CHOOSE_DIRECTION = ". Выберите направление:";
     public static final String CHOOSE_DOCTOR = ". Выберите доктора:";
     public static final String CONFIRM_MESSAGE = "Подтвердите правильность введенных данных, или измените значения: \n";
-    public static final String WAIT_MESSAGE = "\nЯ пришлю уведомление, как только появятся нужные вам талончики, ожидайте :)";
+    public static final String WAIT_MESSAGE = "\nЯ пришлю уведомление, как только появятся нужные вам талончики," +
+            " ожидайте :) Если не хотите, чтобы я вас сильно тревожил, отключите в настройках звук на уведомления" +
+            " (они будут приходить, пока вы не нажмете /stop_alarm)";
     public static final String ANSWER_MESSAGE = "Ура! Появились нужные вам талончики, скорее записывайтесь!\n";
     public static final String EMPTY_COLLECTION = "Коллекция пуста! (Вероятно все остальные запросы еще отслеживаются)";
 

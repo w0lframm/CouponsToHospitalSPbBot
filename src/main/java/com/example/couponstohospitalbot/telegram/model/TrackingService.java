@@ -57,19 +57,35 @@ public class TrackingService {
                     try {
                         Tracking tracking = findById(trackId);
                         JSONArray result = getDoctorsList(tracking.getHospitalId(), tracking.getDirectionId());
-                        for (int i = 0; i < result.length(); i++) {
-                            if ((Objects.equals(tracking.getDoctorId(), "-1") ||
-                                    result.getJSONObject(i).get("id").equals(tracking.getDoctorId())) &&
-                                    (int) result.getJSONObject(i).get("freeTicketCount") > 0) {
-                                logger.info("Coupon found");
-                                String url = getLink(trackId);
-                                String mess = ANSWER_MESSAGE + "\n" + getRequestInfo(trackId) + "\nСсылка для записи: " + url + "\n\n" + STOP_ALARM;
-                                ApplicationContextHolder.getContext().getBean(Bot.class).notifyUser(tracking.getChatId().toString(), mess);
-                                alarmStart(tracking.getChatId().toString());
-                                setFinished(trackId);
-                                toDeleteEvents.add(trackId);
-                                break;
+                        boolean flag = false;
+                        if (result != null) {
+                            for (int i = 0; i < result.length(); i++) {
+                                if (Objects.equals(tracking.getDoctorId(), "-1") ||
+                                        result.getJSONObject(i).get("id").equals(tracking.getDoctorId())) {
+                                    flag = true;
+                                    if ((int) result.getJSONObject(i).get("freeTicketCount") > 0) {
+                                        logger.info("Coupon found");
+                                        String url = getLink(trackId);
+                                        String mess = ANSWER_MESSAGE + "\n" + getRequestInfo(trackId) +
+                                                "\nСсылка для записи: " + url + "\n\n" + STOP_ALARM;
+                                        ApplicationContextHolder.getContext().getBean(Bot.class)
+                                                .notifyUser(tracking.getChatId().toString(), mess);
+                                        alarmStart(tracking.getChatId().toString());
+                                        setFinished(trackId);
+                                        toDeleteEvents.add(trackId);
+                                        break;
+                                    }
+                                }
                             }
+                        }
+                        if (!flag) {
+                            String mess = "К сожалению, данный выбор больше не доступен.\n" +
+                                    "\nПожалуйста, перезапишитесь";
+                            ApplicationContextHolder.getContext().getBean(Bot.class)
+                                    .notifyUser(tracking.getChatId().toString(), mess);
+                            toDeleteEvents.add(trackId);
+                            ApplicationContextHolder.getContext().getBean(CollectionService.class)
+                                    .deleteItem(trackId);
                         }
                     } catch (URISyntaxException | IOException ignored) {
                     }

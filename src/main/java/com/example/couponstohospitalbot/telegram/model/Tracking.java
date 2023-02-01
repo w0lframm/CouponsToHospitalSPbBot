@@ -25,13 +25,11 @@ public class Tracking {
     private Integer hospitalId;
     @Column(name = "direction_id", nullable = false)
     private String directionId;
-    @Column(name = "doctor_id")
+    @Column(name = "doctor_id", nullable = false)
     private String doctorId;
 
     @Column(name = "is_finished", nullable = false) //отработал или еще нет
     private Boolean isFinished;
-    @Column(name = "is_deleted", nullable = false) //удален из коллекции или нет
-    private Boolean isDeleted;
 
     public Tracking(State state) {
         chatId = state.getChatId();
@@ -40,6 +38,5 @@ public class Tracking {
         directionId = state.getDirectionId();
         doctorId = state.getDoctorId();
         isFinished = false;
-        isDeleted = false;
     }
 }
