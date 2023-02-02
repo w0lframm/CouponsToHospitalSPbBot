@@ -1,5 +1,6 @@
 package com.example.couponstohospitalbot.telegram.keyboards;
 
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import com.example.couponstohospitalbot.telegram.model.State;
 import com.example.couponstohospitalbot.telegram.model.StateService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class KeyBoardFactory {
     private static final Logger logger = Logger.getLogger(KeyBoardFactory.class.getName());
     private final StateService stateService;
 
-    public ReplyKeyboard regionButtons(Long chatId, Boolean flag) throws IOException, URISyntaxException {
+    public ReplyKeyboard regionButtons(Long chatId, Boolean flag) throws IOException, URISyntaxException, SiteFailException {
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         JSONArray array = ParsingJson.getRegionsList();
@@ -48,14 +49,8 @@ public class KeyBoardFactory {
         return inlineKeyboard;
     }
 
-    public ReplyKeyboard hospitalButtons(Long chatId, String regionId) throws IOException, URISyntaxException {
+    public ReplyKeyboard hospitalButtons(Long chatId, String regionId) throws IOException, URISyntaxException, SiteFailException {
         State state = stateService.findByChatId(chatId);
-//        if (state == null) {
-//            //сделать проверку поадекватнее, работает криво
-//            //кнопки нажаты не в том порядке, вывести сообщение об этом (если хотите отменить предыдущий выбор, нажмите кнопку назад)
-//            logger.warning("expect choice region, but something went wrong");
-//            return null;
-//        }
         if(regionId.equals(BACK)) {
             regionId = state.getRegionId();
             stateService.saveBackHospital(chatId);
@@ -95,13 +90,8 @@ public class KeyBoardFactory {
     }
 
 
-    public ReplyKeyboard departmentButtons(Long chatId, String hospitalId) throws URISyntaxException, IOException {
+    public ReplyKeyboard departmentButtons(Long chatId, String hospitalId) throws URISyntaxException, IOException, SiteFailException {
         State state = stateService.findByChatId(chatId);
-//        if (state == null || state.getRegionId() == null) { //для кнопок назад работать не будет
-//            //сделать проверку поадекватнее, работает криво
-//            logger.warning("expect choice hospital, but something went wrong");
-//            return null;
-//        }
         int hospId;
         if(hospitalId.equals(BACK)) {
             hospId = state.getHospitalId();
@@ -137,13 +127,8 @@ public class KeyBoardFactory {
         return inlineKeyboard;
     }
 
-    public ReplyKeyboard doctorButtons(Long chatId, String directionId) {
+    public ReplyKeyboard doctorButtons(Long chatId, String directionId) throws SiteFailException {
         State state = stateService.findByChatId(chatId);
-//        if (state == null || state.getRegionId() == null || state.getHospitalId() == null || state.getDirectionId()!=null) {
-//            //сделать проверку поадекватнее, работает криво
-//            logger.warning("expect choice hospital, but something went wrong");
-//            return null;
-//        }
         if(directionId.equals(BACK)) {
             directionId = state.getDirectionId();
             stateService.saveBackDoctor(chatId);

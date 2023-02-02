@@ -1,5 +1,6 @@
 package com.example.couponstohospitalbot.telegram.model;
 
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -81,7 +82,7 @@ public class CollectionService {
         return inlineKeyboard;
     }
 
-    public String getVisitInfo(Long chatId) throws IOException, URISyntaxException {
+    public String getVisitInfo(Long chatId) throws IOException, URISyntaxException, SiteFailException {
         List<Tracking> listTrackId = trackingRepository.listFinishedTrackIdByChatId(chatId);
         if (listTrackId != null) {
             int index = 1;
@@ -91,6 +92,8 @@ public class CollectionService {
                     String info = trackingService.getRequestInfo(id.getTrackId());
                     sb.append(index).append(". ").append(info).append('\n');
                     index++;
+                } catch (SiteFailException e) {
+                    throw new SiteFailException();
                 } catch (Exception e) {
                     deleteItem(id.getTrackId()); //если вдруг больше не корректен выбор
                 }

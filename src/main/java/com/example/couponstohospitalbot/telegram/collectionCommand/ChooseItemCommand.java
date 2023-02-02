@@ -2,6 +2,7 @@ package com.example.couponstohospitalbot.telegram.collectionCommand;
 
 import com.example.couponstohospitalbot.ApplicationContextHolder;
 import com.example.couponstohospitalbot.telegram.Command;
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import com.example.couponstohospitalbot.telegram.model.CollectionService;
 import com.example.couponstohospitalbot.telegram.model.TrackingService;
 import lombok.RequiredArgsConstructor;
@@ -13,13 +14,14 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
+
 @RequiredArgsConstructor
 public class ChooseItemCommand implements Command {
     private final MessageSender sender;
     SendMessage message;
     private static final Logger logger = Logger.getLogger(ChooseItemCommand.class.getName());
     @Override
-    public void execute(Update update) { //здесь выводить 3 кнопки: отследить, удалить из коллекции, назад
+    public void execute(Update update) throws SiteFailException { //здесь выводить 3 кнопки: отследить, удалить из коллекции, назад
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
         logger.info("ChatId = " + chatId + "; choose action buttons");
 

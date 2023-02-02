@@ -2,6 +2,7 @@ package com.example.couponstohospitalbot.telegram.hospitalCommand;
 
 import com.example.couponstohospitalbot.ApplicationContextHolder;
 import com.example.couponstohospitalbot.telegram.Command;
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import com.example.couponstohospitalbot.telegram.keyboards.KeyBoardFactory;
 import com.example.couponstohospitalbot.telegram.model.StateService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class SubmitCommand implements Command {
     private static final String ALL_DOCTORS = "Без разницы";
 
     @Override
-    public void execute(Update update) {
+    public void execute(Update update) throws SiteFailException {
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
         String doctorId = update.getCallbackQuery().getData();
         if(Objects.equals(doctorId, BACK)) {

@@ -3,11 +3,14 @@ package com.example.couponstohospitalbot.telegram;
 import com.example.couponstohospitalbot.ApplicationContextHolder;
 import com.example.couponstohospitalbot.telegram.collectionCommand.CollectionCommandContainer;
 import com.example.couponstohospitalbot.telegram.command.CommandContainer;
+import com.example.couponstohospitalbot.telegram.command.FailSiteCommand;
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import com.example.couponstohospitalbot.telegram.hospitalCommand.HospitalCommandContainer;
 
 import com.example.couponstohospitalbot.telegram.hospitalCommand.HospitalCommandName;
 import com.example.couponstohospitalbot.telegram.hospitalCommand.NotifyCommand;
 import com.example.couponstohospitalbot.telegram.model.StateService;
+import org.json.JSONException;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.sender.DefaultSender;
 import org.telegram.abilitybots.api.sender.MessageSender;
@@ -73,11 +76,15 @@ public class Bot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             if (update.getMessage().hasText()) {
                 String message = update.getMessage().getText().trim();
-                if (message.startsWith(COMMAND_PREFIX)) {
-                    String commandIdentifier = message.split(" ")[0].toLowerCase();
-                    commandContainer.retrieveCommand(commandIdentifier).execute(update);
-                } else {
-                    commandContainer.retrieveCommand(NO.getCommandName()).execute(update);
+                try {
+                    if (message.startsWith(COMMAND_PREFIX)) {
+                        String commandIdentifier = message.split(" ")[0].toLowerCase();
+                            commandContainer.retrieveCommand(commandIdentifier).execute(update);
+                    } else {
+                        commandContainer.retrieveCommand(NO.getCommandName()).execute(update);
+                    }
+                } catch (JSONException | SiteFailException e) {
+                    new FailSiteCommand(sender).execute(update);
                 }
             }
         } else if (update.hasCallbackQuery()) {
@@ -90,12 +97,16 @@ public class Bot extends TelegramLongPollingBot {
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
-            //проверка, что мы в коллекции
-            if (update.getCallbackQuery().getData().startsWith("/col_")) {
-                collectionCommandContainer.retrieveCommand(update.getCallbackQuery().getData()).execute(update);
-            } else {
-                HospitalCommandName name = ApplicationContextHolder.getContext().getBean(StateService.class).getCurrentState(chatId);
-                hospitalCommandContainer.retrieveCommand(name.getHospitalCommandName()).execute(update);
+            try {
+                //проверка, что мы в коллекции
+                if (update.getCallbackQuery().getData().startsWith("/col_")) {
+                    collectionCommandContainer.retrieveCommand(update.getCallbackQuery().getData()).execute(update);
+                } else {
+                    HospitalCommandName name = ApplicationContextHolder.getContext().getBean(StateService.class).getCurrentState(chatId);
+                    hospitalCommandContainer.retrieveCommand(name.getHospitalCommandName()).execute(update);
+                }
+            } catch (JSONException | SiteFailException e) {
+                new FailSiteCommand(sender).execute(update);
             }
         }
     }

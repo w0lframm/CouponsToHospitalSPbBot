@@ -27,6 +27,7 @@ public class Constants {
             + "Чтобы посмотреть список команд введите /help";
     public static final String STOP_ALARM = "Чтобы остановить оповещения, нажми /stop_alarm";
     public static final String ONLY_PHONE_MESSAGE = "В эту поликлинику можно записаться только по телефону";
+    public static final String FAIL_MESSAGE = "К сожалению, сайт временно не работает, попробуйте позже";
 
     public static final String HELP_MESSAGE = String.format("✨ <b> Доступные команды </b> ✨\n\n"
                     + "<b> Начать\\закончить работу с ботом </b>\n"

@@ -2,6 +2,7 @@ package com.example.couponstohospitalbot.telegram.hospitalCommand;
 
 import com.example.couponstohospitalbot.ApplicationContextHolder;
 import com.example.couponstohospitalbot.telegram.Command;
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import com.example.couponstohospitalbot.telegram.keyboards.KeyBoardFactory;
 import com.example.couponstohospitalbot.telegram.model.State;
 import com.example.couponstohospitalbot.telegram.model.StateService;
@@ -27,7 +28,7 @@ public class TrackingCommand implements Command {
     private static final Logger logger = Logger.getLogger(TrackingCommand.class.getName());
 
     @Override
-    public void execute(Update update) {
+    public void execute(Update update) throws SiteFailException {
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
         State state = ApplicationContextHolder.getContext().getBean(StateService.class).findByChatId(chatId);
         Long trackId = ApplicationContextHolder.getContext().getBean(TrackingService.class).initTracking(state);

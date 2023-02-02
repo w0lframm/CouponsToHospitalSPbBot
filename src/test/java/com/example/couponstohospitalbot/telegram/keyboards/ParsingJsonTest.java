@@ -1,5 +1,6 @@
 package com.example.couponstohospitalbot.telegram.keyboards;
 
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,43 +10,42 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.getRegionsList;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class ParsingJsonTest {
     static JSONArray arrayReg;
 
     @BeforeAll
-    static void setUp() throws IOException, URISyntaxException {
+    static void setUp() throws IOException, SiteFailException {
         arrayReg = ParsingJson.getRegionsList();
     }
 
     @Test
-    void findRegionIdByName() throws IOException, URISyntaxException, JSONException {
+    void findRegionIdByName() throws IOException, JSONException, SiteFailException {
         String reg = ParsingJson.findRegionIdByName(arrayReg.getJSONObject(0).get("name").toString());
         assertEquals(arrayReg.getJSONObject(0).get("id"), reg);
     }
 
     @Test
-    void findRegionIdByInvalidName() throws IOException, URISyntaxException {
+    void findRegionIdByInvalidName() throws IOException, SiteFailException {
         String reg = ParsingJson.findRegionIdByName("wrong-region");
         assertNull(reg);
     }
 
     @Test
-    void findRegionNameById() throws JSONException, IOException, URISyntaxException {
+    void findRegionNameById() throws JSONException, IOException, URISyntaxException, SiteFailException {
         String reg = ParsingJson.findRegionNameById(arrayReg.getJSONObject(0).get("id").toString());
         assertEquals(arrayReg.getJSONObject(0).get("name"), reg);
     }
 
     @Test
-    void findRegionNameByInvalidId() throws IOException, URISyntaxException {
+    void findRegionNameByInvalidId() throws IOException, URISyntaxException, SiteFailException {
         String reg = ParsingJson.findRegionNameById("wrongId");
         assertNull(reg);
     }
 
     @Test
-    void findHospitalIdByName() throws JSONException, IOException, URISyntaxException {
+    void findHospitalIdByName() throws JSONException, IOException, SiteFailException {
         String regId = arrayReg.getJSONObject(0).get("id").toString();
         JSONArray arrayHosp = ParsingJson.getHospitalList(regId);
         Integer hospId = ParsingJson.findHospitalIdByName(regId, arrayHosp.getJSONObject(0).get("lpuFullName").toString());
@@ -53,21 +53,14 @@ class ParsingJsonTest {
     }
 
     @Test
-    void findHospitalIdByInvalidName() throws JSONException, IOException, URISyntaxException {
+    void findHospitalIdByInvalidName() throws JSONException, IOException, SiteFailException {
         String regId = arrayReg.getJSONObject(0).get("id").toString();
         Integer hospId = ParsingJson.findHospitalIdByName(regId, "wrong-name");
         assertEquals(-1, hospId);
     }
 
-    //    JSONArray arrayDir = getDirectionsList(hospId);
-//        for (int i = 0; i < arrayDir.length(); i++) {
-//        if (arrayDir.getJSONObject(i).get("name").equals(direction)) {
-//            return arrayDir.getJSONObject(i).get("id").toString();
-//        }
-//    }
-//        return null;
     @Test
-    void findDirectionIdByName() throws JSONException, IOException, URISyntaxException {
+    void findDirectionIdByName() throws JSONException, IOException, SiteFailException {
         String regId = arrayReg.getJSONObject(0).get("id").toString();
         JSONArray arrayHosp = ParsingJson.getHospitalList(regId);
         JSONArray arrayDir = ParsingJson.getDirectionsList((Integer) arrayHosp.getJSONObject(0).get("id"));
@@ -77,7 +70,7 @@ class ParsingJsonTest {
     }
 
     @Test
-    void findDirectionIdByInvalidName() throws JSONException, IOException, URISyntaxException {
+    void findDirectionIdByInvalidName() throws JSONException, IOException, SiteFailException {
         String regId = arrayReg.getJSONObject(0).get("id").toString();
         JSONArray arrayHosp = ParsingJson.getHospitalList(regId);
         String dirId = ParsingJson.findDirectionIdByName((Integer) arrayHosp.getJSONObject(0).get("id"),
@@ -86,7 +79,7 @@ class ParsingJsonTest {
     }
 
     @Test
-    void findDoctorIdByName() throws JSONException, IOException, URISyntaxException {
+    void findDoctorIdByName() throws JSONException, IOException, URISyntaxException, SiteFailException {
         String regId = arrayReg.getJSONObject(0).get("id").toString();
 
         JSONArray arrayHosp = ParsingJson.getHospitalList(regId);

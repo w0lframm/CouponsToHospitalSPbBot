@@ -2,6 +2,7 @@ package com.example.couponstohospitalbot.telegram.hospitalCommand;
 
 import com.example.couponstohospitalbot.ApplicationContextHolder;
 import com.example.couponstohospitalbot.telegram.Command;
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import com.example.couponstohospitalbot.telegram.keyboards.KeyBoardFactory;
 import com.example.couponstohospitalbot.telegram.model.State;
 import com.example.couponstohospitalbot.telegram.model.StateService;
@@ -28,7 +29,7 @@ public class ChooseDoctorCommand implements Command {
     private static final String BACK = "Назад";
 
     @Override
-    public void execute(Update update) {
+    public void execute(Update update) throws SiteFailException {
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
         String directionId = update.getCallbackQuery().getData();
         if(Objects.equals(directionId, BACK)) {

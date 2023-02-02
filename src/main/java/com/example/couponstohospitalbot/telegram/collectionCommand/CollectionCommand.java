@@ -2,6 +2,7 @@ package com.example.couponstohospitalbot.telegram.collectionCommand;
 
 import com.example.couponstohospitalbot.ApplicationContextHolder;
 import com.example.couponstohospitalbot.telegram.Command;
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import com.example.couponstohospitalbot.telegram.model.CollectionService;
 import lombok.RequiredArgsConstructor;
 import org.telegram.abilitybots.api.sender.MessageSender;
@@ -20,7 +21,7 @@ public class CollectionCommand implements Command {
     private static final Logger logger = Logger.getLogger(CollectionCommand.class.getName());
 
     @Override
-    public void execute(Update update) {
+    public void execute(Update update) throws SiteFailException {
         Long chatId;
         try {
             chatId = update.getMessage().getChatId();

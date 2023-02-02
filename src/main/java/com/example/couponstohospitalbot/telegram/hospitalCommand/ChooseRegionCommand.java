@@ -2,6 +2,7 @@ package com.example.couponstohospitalbot.telegram.hospitalCommand;
 
 import com.example.couponstohospitalbot.ApplicationContextHolder;
 import com.example.couponstohospitalbot.telegram.Command;
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import com.example.couponstohospitalbot.telegram.keyboards.KeyBoardFactory;
 import lombok.RequiredArgsConstructor;
 import org.telegram.abilitybots.api.sender.MessageSender;
@@ -23,7 +24,7 @@ public class ChooseRegionCommand implements Command {
     private static final Logger logger = Logger.getLogger(ChooseRegionCommand.class.getName());
 
     @Override
-    public void execute(Update update) {
+    public void execute(Update update) throws SiteFailException {
         Long chatId = update.getMessage().getChatId();
         logger.info("ChatId = " + chatId);
         message = new SendMessage(chatId.toString(), CHOOSE_MESSAGE);

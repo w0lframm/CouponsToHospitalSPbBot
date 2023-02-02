@@ -2,6 +2,7 @@ package com.example.couponstohospitalbot.telegram.model;
 
 import com.example.couponstohospitalbot.ApplicationContextHolder;
 import com.example.couponstohospitalbot.telegram.Bot;
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.springframework.stereotype.Service;
@@ -52,51 +53,63 @@ public class TrackingService {
         }
         while (true) {
             TimeUnit.SECONDS.sleep(60); //проверяем с интервалом в минуту
-            if (!events.isEmpty()) {
-                for (Long trackId : events) {
+            for (Long trackId : events) {
+                try {
+                    Tracking tracking = findById(trackId);
+                    JSONArray result;
                     try {
-                        Tracking tracking = findById(trackId);
-                        JSONArray result = getDoctorsList(tracking.getHospitalId(), tracking.getDirectionId());
-                        boolean flag = false;
-                        if (result != null) {
-                            for (int i = 0; i < result.length(); i++) {
-                                if (Objects.equals(tracking.getDoctorId(), "-1") ||
-                                        result.getJSONObject(i).get("id").equals(tracking.getDoctorId())) {
-                                    flag = true;
-                                    if ((int) result.getJSONObject(i).get("freeTicketCount") > 0) {
-                                        logger.info("Coupon found");
-                                        String url = getLink(trackId);
-                                        String mess = ANSWER_MESSAGE + "\n" + getRequestInfo(trackId) +
+                        result = getDoctorsList(tracking.getHospitalId(), tracking.getDirectionId());
+                    } catch (SiteFailException e) {
+                        logger.warning(e.getMessage());
+                        TimeUnit.SECONDS.sleep(60);
+                        continue;
+                    }
+                    boolean flag = false;
+                    if (result != null) {
+                        for (int i = 0; i < result.length(); i++) {
+                            if (Objects.equals(tracking.getDoctorId(), "-1") ||
+                                    result.getJSONObject(i).get("id").equals(tracking.getDoctorId())) {
+                                flag = true; //чтобы не удалилось из коллекции
+                                if ((int) result.getJSONObject(i).get("freeTicketCount") > 0) {
+                                    logger.info("Coupon found");
+                                    String url = getLink(trackId);
+                                    String mess;
+                                    try {
+                                        mess = ANSWER_MESSAGE + "\n" + getRequestInfo(trackId) +
                                                 "\nСсылка для записи: " + url + "\n\n" + STOP_ALARM;
-                                        ApplicationContextHolder.getContext().getBean(Bot.class)
-                                                .notifyUser(tracking.getChatId().toString(), mess);
-                                        alarmStart(tracking.getChatId().toString());
-                                        setFinished(trackId);
-                                        toDeleteEvents.add(trackId);
+                                    } catch (SiteFailException e) {
+                                        logger.warning(e.getMessage());
                                         break;
                                     }
+                                    ApplicationContextHolder.getContext().getBean(Bot.class)
+                                            .notifyUser(tracking.getChatId().toString(), mess);
+                                    alarmStart(tracking.getChatId().toString());
+                                    setFinished(trackId);
+                                    toDeleteEvents.add(trackId);
+                                    break;
                                 }
                             }
                         }
-                        if (!flag) {
-                            String mess = "К сожалению, данный выбор больше не доступен.\n" +
-                                    "\nПожалуйста, перезапишитесь";
-                            ApplicationContextHolder.getContext().getBean(Bot.class)
-                                    .notifyUser(tracking.getChatId().toString(), mess);
-                            toDeleteEvents.add(trackId);
-                            ApplicationContextHolder.getContext().getBean(CollectionService.class)
-                                    .deleteItem(trackId);
-                        }
-                    } catch (URISyntaxException | IOException ignored) {
                     }
-                }
-                if (!toDeleteEvents.isEmpty()) {
-                    for (Long trackId : toDeleteEvents) { //очищаем список событий
-                        events.remove(trackId);
+                    if (!flag) {
+                        String mess = "К сожалению, данный выбор больше не доступен.\n" +
+                                "\nПожалуйста, перезапишитесь";
+                        ApplicationContextHolder.getContext().getBean(Bot.class)
+                                .notifyUser(tracking.getChatId().toString(), mess);
+                        toDeleteEvents.add(trackId);
+                        ApplicationContextHolder.getContext().getBean(CollectionService.class)
+                                .deleteItem(trackId);
                     }
-                    toDeleteEvents = new ArrayList<>();
+                } catch (URISyntaxException | IOException ignored) {
                 }
             }
+            if (!toDeleteEvents.isEmpty()) {
+                for (Long trackId : toDeleteEvents) { //очищаем список событий
+                    events.remove(trackId);
+                }
+                toDeleteEvents = new ArrayList<>();
+            }
+
         }
     }
 
@@ -115,7 +128,7 @@ public class TrackingService {
         events.add(trackId);
     }
 
-    public String getRequestInfo(Long trackId) throws IOException, URISyntaxException {
+    public String getRequestInfo(Long trackId) throws IOException, URISyntaxException, SiteFailException {
         Tracking tracking = findById(trackId);
         StringBuilder sb = new StringBuilder("Район: ");
         sb.append(findRegionNameById(tracking.getRegionId())).append("\nБольница: ");

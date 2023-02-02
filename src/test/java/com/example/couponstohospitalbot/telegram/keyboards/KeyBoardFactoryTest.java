@@ -1,5 +1,6 @@
 package com.example.couponstohospitalbot.telegram.keyboards;
 
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +24,7 @@ class KeyBoardFactoryTest {
     KeyBoardFactory keyBoardFactory;
 
     @Test
-    void regionButtons() throws IOException, URISyntaxException, JSONException {
+    void regionButtons() throws IOException, URISyntaxException, JSONException, SiteFailException {
         ReplyKeyboard inlineKeyboardToCheck = keyBoardFactory.regionButtons(0L, true);
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
 

@@ -2,6 +2,7 @@ package com.example.couponstohospitalbot.telegram.collectionCommand;
 
 import com.example.couponstohospitalbot.ApplicationContextHolder;
 import com.example.couponstohospitalbot.telegram.Command;
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import com.example.couponstohospitalbot.telegram.model.CollectionService;
 import com.example.couponstohospitalbot.telegram.model.TrackingService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class TrackingItemCommand implements Command {
     SendMessage message;
     private static final Logger logger = Logger.getLogger(TrackingItemCommand.class.getName());
     @Override
-    public void execute(Update update) {
+    public void execute(Update update) throws SiteFailException {
         String[] parts = update.getCallbackQuery().getData().split(" ");
         long trackId = Long.parseLong(parts[1]);
         Long chatId = update.getCallbackQuery().getMessage().getChatId();

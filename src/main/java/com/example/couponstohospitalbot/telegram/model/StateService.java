@@ -1,5 +1,6 @@
 package com.example.couponstohospitalbot.telegram.model;
 
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import com.example.couponstohospitalbot.telegram.hospitalCommand.HospitalCommandName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -103,7 +104,7 @@ public class StateService {
         stateRepository.save(new State(chatId));
     }
 
-    public String getRequestInfo(Long chatId, String doctorId) throws IOException, URISyntaxException {
+    public String getRequestInfo(Long chatId, String doctorId) throws IOException, URISyntaxException, SiteFailException {
         State state = findByChatId(chatId);
         StringBuilder sb = new StringBuilder("Район: ");
         sb.append(findRegionNameById(state.getRegionId())).append("\nБольница: ");
@@ -117,7 +118,7 @@ public class StateService {
         return sb.toString();
     }
 
-    public String getRequestInfo(Long chatId) throws IOException, URISyntaxException {
+    public String getRequestInfo(Long chatId) throws IOException, URISyntaxException, SiteFailException {
         State state = findByChatId(chatId);
         StringBuilder sb = new StringBuilder("Район: ");
         sb.append(findRegionNameById(state.getRegionId())).append("\nБольница: ");

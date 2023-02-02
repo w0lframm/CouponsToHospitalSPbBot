@@ -2,6 +2,7 @@ package com.example.couponstohospitalbot.telegram.collectionCommand;
 
 import com.example.couponstohospitalbot.ApplicationContextHolder;
 import com.example.couponstohospitalbot.telegram.Command;
+import com.example.couponstohospitalbot.telegram.exception.SiteFailException;
 import com.example.couponstohospitalbot.telegram.model.CollectionService;
 import com.example.couponstohospitalbot.telegram.model.TrackingService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class SubmitColCommand implements Command {
     SendMessage message;
     private static final Logger logger = Logger.getLogger(SubmitColCommand.class.getName());
     @Override
-    public void execute(Update update) { // 2 кнопки: да и нет
+    public void execute(Update update) throws SiteFailException { // 2 кнопки: да и нет
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
         logger.info("ChatId = " + chatId + "; choose submit buttons");
 
