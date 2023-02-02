@@ -27,10 +27,10 @@ public class DeleteItemCommand implements Command {
         logger.info("ChatId = " + chatId + "; delete item id = " + trackId);
 
         try {
-            ApplicationContextHolder.getContext().getBean(CollectionService.class).deleteItem(trackId);
             message = new SendMessage(chatId.toString(),
                     ApplicationContextHolder.getContext().getBean(TrackingService.class).getRequestInfo(trackId) +
                             "\nЗапрос удален из коллекции.");
+            ApplicationContextHolder.getContext().getBean(CollectionService.class).deleteItem(trackId);
             sender.execute(message);
         } catch (TelegramApiException | URISyntaxException | IOException e) {
             e.printStackTrace();

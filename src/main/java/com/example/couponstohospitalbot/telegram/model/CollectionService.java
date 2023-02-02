@@ -87,8 +87,13 @@ public class CollectionService {
             int index = 1;
             StringBuilder sb = new StringBuilder();
             for (var id : listTrackId) {
-                sb.append(index).append(". ").append(trackingService.getRequestInfo(id.getTrackId())).append('\n');
-                index++;
+                try {
+                    String info = trackingService.getRequestInfo(id.getTrackId());
+                    sb.append(index).append(". ").append(info).append('\n');
+                    index++;
+                } catch (Exception e) {
+                    deleteItem(id.getTrackId()); //если вдруг больше не корректен выбор
+                }
             }
             return sb.toString();
         }
@@ -99,8 +104,7 @@ public class CollectionService {
         Optional<Tracking> tracking = trackingRepository.findById(trackId);
         if (tracking.isPresent()) {
             Tracking track = tracking.get();
-            track.setIsDeleted(true);
-            trackingRepository.save(track);
+            trackingRepository.delete(track);
         }
     }
 

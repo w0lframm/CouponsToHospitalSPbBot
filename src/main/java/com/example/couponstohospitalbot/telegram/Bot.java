@@ -49,6 +49,8 @@ public class Bot extends TelegramLongPollingBot {
         listOfCommands.add(new BotCommand(COLLECTION.getCommandName(), "choose your previous request"));
         listOfCommands.add(new BotCommand(CHOOSE.getCommandName(), "choose your region"));
         listOfCommands.add(new BotCommand(STOP.getCommandName(), "get your data stored"));
+        listOfCommands.add(new BotCommand(STOP_ALARM.getCommandName(), "stop alarm when coupon found"));
+
 
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
@@ -58,8 +60,12 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public void notifyUser(String chatId, String message) {
-        new NotifyCommand(sender).execute(chatId, message);
+    public Integer notifyUser(String chatId, String message) {
+        return new NotifyCommand(sender).execute(chatId, message);
+    }
+
+    public void deleteLastNotifyMsg(String chatId, Integer messageId) {
+        new NotifyCommand(sender).deleteLastMsg(chatId, messageId);
     }
 
     @Override

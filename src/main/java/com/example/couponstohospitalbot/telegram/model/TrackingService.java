@@ -13,18 +13,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static com.example.couponstohospitalbot.telegram.keyboards.Constants.ANSWER_MESSAGE;
+import static com.example.couponstohospitalbot.telegram.keyboards.Constants.STOP_ALARM;
 import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.*;
 
 @Service
 @RequiredArgsConstructor
 public class TrackingService {
     private final TrackingRepository trackingRepository;
+    private AlarmThread alarm;
     private static final Logger logger = Logger.getLogger(TrackingService.class.getName());
     private final List<Long> events = new LinkedList<>();
     private List<Long> toDeleteEvents = new ArrayList<>();
 
     private static final String url = "https://gorzdrav.spb.ru/service-free-schedule#%5B%7B%22district%22:" +
-        "%22DISTRICTID%22%7D,%7B%22lpu%22:%22HOSPITALID%22%7D,%7B%22speciality%22:%22DIRECTIONID%22%7D%5D";
+            "%22DISTRICTID%22%7D,%7B%22lpu%22:%22HOSPITALID%22%7D,%7B%22speciality%22:%22DIRECTIONID%22%7D%5D";
     private static final String urlWithDoctor = "https://gorzdrav.spb.ru/service-free-schedule#%5B%7B%22district%22:" +
             "%22DISTRICTID%22%7D,%7B%22lpu%22:%22HOSPITALID%22%7D,%7B%22speciality%22:" +
             "%22DIRECTIONID%22%7D,%7B%22doctor%22:%22DOCTORID%22%7D%5D";
@@ -45,7 +47,7 @@ public class TrackingService {
 
     public Runnable waitCoupons() throws InterruptedException {
         List<Tracking> list = trackingRepository.getActiveRequests();
-        for (var elem: list) { //для корректного возобновления работы после перезапуска приложения
+        for (var elem : list) { //для корректного возобновления работы после перезапуска приложения
             events.add(elem.getTrackId());
         }
         while (true) {
@@ -55,18 +57,35 @@ public class TrackingService {
                     try {
                         Tracking tracking = findById(trackId);
                         JSONArray result = getDoctorsList(tracking.getHospitalId(), tracking.getDirectionId());
-
-                        for (int i = 0; i < result.length(); i++) {
-                            if ((Objects.equals(tracking.getDoctorId(), "-1") ||
-                                    result.getJSONObject(i).get("id").equals(tracking.getDoctorId())) &&
-                                    (int) result.getJSONObject(i).get("freeTicketCount") > 0) {
-                                String url = getLink(trackId);
-                                String mess = ANSWER_MESSAGE + "\n" + getRequestInfo(trackId) + "\nСсылка для записи: " + url;
-                                ApplicationContextHolder.getContext().getBean(Bot.class).notifyUser(tracking.getChatId().toString(), mess);
-                                setFinished(trackId);
-                                toDeleteEvents.add(trackId);
-                                break;
+                        boolean flag = false;
+                        if (result != null) {
+                            for (int i = 0; i < result.length(); i++) {
+                                if (Objects.equals(tracking.getDoctorId(), "-1") ||
+                                        result.getJSONObject(i).get("id").equals(tracking.getDoctorId())) {
+                                    flag = true;
+                                    if ((int) result.getJSONObject(i).get("freeTicketCount") > 0) {
+                                        logger.info("Coupon found");
+                                        String url = getLink(trackId);
+                                        String mess = ANSWER_MESSAGE + "\n" + getRequestInfo(trackId) +
+                                                "\nСсылка для записи: " + url + "\n\n" + STOP_ALARM;
+                                        ApplicationContextHolder.getContext().getBean(Bot.class)
+                                                .notifyUser(tracking.getChatId().toString(), mess);
+                                        alarmStart(tracking.getChatId().toString());
+                                        setFinished(trackId);
+                                        toDeleteEvents.add(trackId);
+                                        break;
+                                    }
+                                }
                             }
+                        }
+                        if (!flag) {
+                            String mess = "К сожалению, данный выбор больше не доступен.\n" +
+                                    "\nПожалуйста, перезапишитесь";
+                            ApplicationContextHolder.getContext().getBean(Bot.class)
+                                    .notifyUser(tracking.getChatId().toString(), mess);
+                            toDeleteEvents.add(trackId);
+                            ApplicationContextHolder.getContext().getBean(CollectionService.class)
+                                    .deleteItem(trackId);
                         }
                     } catch (URISyntaxException | IOException ignored) {
                     }
@@ -80,7 +99,6 @@ public class TrackingService {
             }
         }
     }
-
 
     private Tracking findById(Long trackId) {
         Optional<Tracking> optionalTracking = trackingRepository.findById(trackId);
@@ -124,6 +142,17 @@ public class TrackingService {
                     .replace("HOSPITALID", tracking.getHospitalId().toString())
                     .replace("DIRECTIONID", tracking.getDirectionId())
                     .replace("DOCTORID", tracking.getDoctorId());
+        }
+    }
+
+    private void alarmStart(String chatId) {
+        alarm = new AlarmThread(chatId);
+        alarm.start();
+    }
+
+    public void alarmStop() {
+        if (alarm != null) {
+            alarm.interrupt();
         }
     }
 }

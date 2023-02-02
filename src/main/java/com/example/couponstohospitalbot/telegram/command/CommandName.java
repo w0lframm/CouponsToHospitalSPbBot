@@ -12,7 +12,8 @@ public enum CommandName {
     NO("nocommand"),
     STOP("/stop"),
     COLLECTION("/collection"),
-    CHOOSE("/choose");
+    CHOOSE("/choose"),
+    STOP_ALARM("/stop_alarm");
 
     private final String commandName;
 }

@@ -6,6 +6,8 @@ import com.example.couponstohospitalbot.telegram.keyboards.KeyBoardFactory;
 import com.example.couponstohospitalbot.telegram.model.State;
 import com.example.couponstohospitalbot.telegram.model.StateService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.json.JSONException;
 import org.telegram.abilitybots.api.sender.MessageSender;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,6 +19,7 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 import static com.example.couponstohospitalbot.telegram.keyboards.Constants.CHOOSE_DIRECTION;
+import static com.example.couponstohospitalbot.telegram.keyboards.Constants.ONLY_PHONE_MESSAGE;
 import static com.example.couponstohospitalbot.telegram.keyboards.ParsingJson.findHospitalNameById;
 
 @RequiredArgsConstructor
@@ -26,11 +29,12 @@ public class ChooseDirectionCommand implements Command {
     private static final Logger logger = Logger.getLogger(ChooseDirectionCommand.class.getName());
     private static final String BACK = "Назад";
 
+    @SneakyThrows
     @Override
     public void execute(Update update) {
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
         String hospitalId = update.getCallbackQuery().getData();
-        if(Objects.equals(hospitalId, BACK)) {
+        if (Objects.equals(hospitalId, BACK)) {
             logger.info("ChatId = " + chatId + "; Нажата кнопка Назад");
             try {
                 message = new SendMessage(chatId.toString(), "Повторите выбор района: ");
@@ -48,8 +52,10 @@ public class ChooseDirectionCommand implements Command {
                 message.enableHtml(true);
                 message.setReplyMarkup(ApplicationContextHolder.getContext().getBean(KeyBoardFactory.class).departmentButtons(chatId, hospitalId));
                 sender.execute(message);
+            } catch (JSONException e) {
+                sender.execute(new SendMessage(chatId.toString(), ONLY_PHONE_MESSAGE));
             } catch (TelegramApiException | IOException | URISyntaxException e) {
-                    e.printStackTrace();
+                e.printStackTrace();
             }
         }
     }
