@@ -26,7 +26,7 @@ public class CollectionService {
 
         if (listTrack != null) {
             int index = 1;
-            for (var id : listTrack) {
+            for (Tracking id : listTrack) {
                 List<InlineKeyboardButton> rowInline = new ArrayList<>();
                 InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton(index + ".");
                 inlineKeyboardButton.setCallbackData("/col_trackId " + id.getTrackId());
@@ -87,7 +87,7 @@ public class CollectionService {
         if (listTrackId != null) {
             int index = 1;
             StringBuilder sb = new StringBuilder();
-            for (var id : listTrackId) {
+            for (Tracking id : listTrackId) {
                 try {
                     String info = trackingService.getRequestInfo(id.getTrackId());
                     sb.append(index).append(". ").append(info).append('\n');

@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +35,7 @@ class KeyBoardFactoryTest {
             JSONObject jsObj = array.getJSONObject(i);
             InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton(jsObj.get("name").toString());
             inlineKeyboardButton.setCallbackData(jsObj.get("id").toString());
-            rowsInline.add(List.of(inlineKeyboardButton));
+            rowsInline.add(Collections.singletonList(inlineKeyboardButton));
         }
         inlineKeyboard.setKeyboard(rowsInline);
         assertEquals(inlineKeyboardToCheck, inlineKeyboard);

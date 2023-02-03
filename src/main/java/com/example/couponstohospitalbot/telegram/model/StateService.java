@@ -24,7 +24,7 @@ public class StateService {
     @Transactional
     public HospitalCommandName getCurrentState(Long chatId) {
         Optional<State> optionalState = stateRepository.findByChatId(chatId);
-        if (optionalState.isEmpty()) {
+        if (!optionalState.isPresent()) {
             logger.warning("current state is unknown");
             return null;
         }
@@ -48,7 +48,7 @@ public class StateService {
     @Transactional
     public void saveRegion(Long chatId, String regionId) {
         Optional<State> optionalState = stateRepository.findByChatId(chatId);
-        if (optionalState.isEmpty()) {
+        if (!optionalState.isPresent()) {
             logger.info("can't save region - chat is empty");
             return;
         }
@@ -60,7 +60,7 @@ public class StateService {
     @Transactional
     public void saveHospital(Long chatId, Integer hospitalId) {
         Optional<State> optionalState = stateRepository.findByChatId(chatId);
-        if (optionalState.isEmpty()) {
+        if (!optionalState.isPresent()) {
             logger.info("can't save hospital - chat is empty");
             return;
         }
@@ -72,7 +72,7 @@ public class StateService {
     @Transactional
     public void saveDirection(Long chatId, String directionId) {
         Optional<State> optionalState = stateRepository.findByChatId(chatId);
-        if (optionalState.isEmpty()) {
+        if (!optionalState.isPresent()) {
             logger.info("can't save direction - chat is empty");
             return;
         }
@@ -84,7 +84,7 @@ public class StateService {
     @Transactional
     public void saveDoctor(Long chatId, String doctorId) {
         Optional<State> optionalState = stateRepository.findByChatId(chatId);
-        if (optionalState.isEmpty()) {
+        if (!optionalState.isPresent()) {
             logger.info("can't save direction - chat is empty");
             return;
         }
@@ -135,7 +135,7 @@ public class StateService {
     @Transactional
     public void saveBackHospital(Long chatId) {
         Optional<State> optionalState = stateRepository.findByChatId(chatId);
-        if (optionalState.isEmpty()) {
+        if (!optionalState.isPresent()) {
             logger.info("can't save hospital back- chat is empty");
             return;
         }
@@ -147,7 +147,7 @@ public class StateService {
     @Transactional
     public void saveBackRegion(Long chatId) {
         Optional<State> optionalState = stateRepository.findByChatId(chatId);
-        if (optionalState.isEmpty()) {
+        if (!optionalState.isPresent()) {
             logger.info("can't save hospital back - chat is empty");
             return;
         }
@@ -159,7 +159,7 @@ public class StateService {
     @Transactional
     public void saveBackDirection(Long chatId) {
         Optional<State> optionalState = stateRepository.findByChatId(chatId);
-        if (optionalState.isEmpty()) {
+        if (!optionalState.isPresent()) {
             logger.info("can't save direction back - chat is empty");
             return;
         }
@@ -171,7 +171,7 @@ public class StateService {
     @Transactional
     public void saveBackDoctor(Long chatId) {
         Optional<State> optionalState = stateRepository.findByChatId(chatId);
-        if (optionalState.isEmpty()) {
+        if (!optionalState.isPresent()) {
             logger.info("can't save doctor back - chat is empty");
             return;
         }
